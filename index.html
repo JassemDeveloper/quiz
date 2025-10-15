@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🎮 لعبة أسئلة الأطفال — v3.2 (Fix)</title>
+  <title>🎮 لعبة بطاقات الأسئلة — صوت ملفي قصير</title>
   <style>
     :root{
       --bg:#f0f8ff; --card:#ffffff; --ink:#17223b; --muted:#6b7280; --accent:#10b981; --danger:#ef4444; --brand:#3b82f6; --sky:#aee7ff;
@@ -20,78 +20,120 @@
     .start-sub{color:#0c4a6e;margin:0 0 20px}
     .name-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:20px}
     .name-row input{font-size:1.8rem;padding:18px 20px;border-radius:16px;border:2px solid #93c5fd;min-width:320px}
-    .music-tip{font-size:1.2rem;color:#334155;margin-top:10px}
 
-    .container{max-width:1800px;margin:auto;padding:60px}
-    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:40px}
-    h1{font-size:3rem;margin:0;display:flex;gap:20px;align-items:center}
-    .chip{font-size:1.5rem;padding:16px 30px;border-radius:999px;background:#e0f2ff;color:#0c4a6e}
-
-    .card{background:var(--card);border-radius:28px;box-shadow:var(--shadow);padding:60px}
-    .row{display:flex;gap:30px;flex-wrap:wrap}
-    .grow{flex:1 1 500px}
-
-    .setup label{display:block;font-size:1.8rem;margin-bottom:16px;color:var(--muted)}
-    .setup textarea{width:100%;min-height:400px;padding:30px;border:2px solid #e5e7eb;border-radius:20px;font-family:monospace;background:#fbfdff;font-size:1.6rem}
-    .setup .controls{display:flex;flex-wrap:wrap;gap:30px;margin-top:30px}
-    .setup input[type="number"], .setup input[type="text"]{padding:20px 25px;border-radius:15px;border:2px solid #e5e7eb;font-size:1.6rem}
-    .btn{border:0;border-radius:20px;padding:25px 40px;font-weight:700;cursor:pointer;font-size:1.6rem}
+    .container{max-width:1600px;margin:auto;padding:40px}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+    h1{font-size:2.4rem;margin:0;display:flex;gap:16px;align-items:center}
+    .chip{font-size:1.3rem;padding:10px 18px;border-radius:999px;background:#e0f2ff;color:#0c4a6e}
+    .card{background:var(--card);border-radius:28px;box-shadow:var(--shadow);padding:32px}
+    .btn{border:0;border-radius:20px;padding:18px 28px;font-weight:700;cursor:pointer;font-size:1.4rem}
     .btn.primary{background:var(--brand);color:#fff}
     .btn.ghost{background:#e0f2ff;color:#0c4a6e}
 
-    .hud{display:flex;justify-content:space-between;align-items:center;gap:25px;margin-bottom:30px;font-size:1.8rem}
-    .hud .pill{background:#f1f5f9;color:#334155;padding:15px 30px;border-radius:999px}
-    .progress{height:25px;background:#e0f2ff;border-radius:999px;overflow:hidden;margin-bottom:40px}
+    /* HUD */
+    .hud{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:20px;font-size:1.4rem}
+    .hud .pill{background:#f1f5f9;color:#334155;padding:12px 20px;border-radius:999px;white-space:nowrap}
+    .progress{height:18px;background:#e0f2ff;border-radius:999px;overflow:hidden;margin-bottom:20px}
     .progress>div{height:100%;background:linear-gradient(90deg,#34d399,#10b981);width:0%}
 
-    .question{font-size:3rem;font-weight:800;margin:30px 0 40px;text-align:center}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:40px}
+    /* لوح البطاقات */
+    #cardBoard{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+    .qcard{
+      position:relative;background:#fff;border-radius:26px;box-shadow:0 12px 28px rgba(15,23,42,.12);
+      min-height:260px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+      border:5px solid transparent;transition:.25s;
+      background-image:radial-gradient( circle at 20% 20%, #e6f3ff 0, transparent 50% ),
+                       radial-gradient( circle at 80% 80%, #e9fff6 0, transparent 50% );
+    }
+    .qcard:hover{transform:translateY(-6px)}
+    .qcard.done{opacity:.25;pointer-events:none;transform:none}
+    .qcard.correct{border-color:var(--accent)}
+    .qcard.wrong{border-color:var(--danger)}
+    .qcard .centerMark{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:14px}
+    .qcard .centerMark .num{font-size:5.2rem;font-weight:900;line-height:1;color:#0c4a6e;text-shadow:0 4px 12px rgba(2,6,23,.08)}
+    .qcard .centerMark img{width:88px;height:88px;object-fit:contain;opacity:.95;filter:drop-shadow(0 6px 14px rgba(2,6,23,.12))}
 
-    .choice{position:relative;border:5px solid transparent;border-radius:30px;background:#ffffff;cursor:pointer;transition:.3s;box-shadow:0 15px 35px rgba(17,24,39,.15);font-size:2rem}
-    .choice:hover{transform:translateY(-6px)}
+    /* مودال السؤال */
+    #qModal{position:fixed;inset:0;background:rgba(15,23,42,.35);display:none;align-items:center;justify-content:center;z-index:1100}
+    #qBox{background:#fff;border-radius:26px;box-shadow:var(--shadow);width:min(1020px,95vw);max-height:90vh;overflow:auto}
+    #qHead{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid #e5e7eb}
+    #qTitle{font-size:1.4rem;margin:0}
+    #qBody{padding:16px 22px}
+    .question{font-size:3.6rem;font-weight:900;margin:14px 0 22px;text-align:center;line-height:1.25}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+    .choice{position:relative;border:4px solid transparent;border-radius:18px;background:#ffffff;cursor:pointer;transition:.25s;box-shadow:0 10px 24px rgba(17,24,39,.12);font-size:1.6rem}
+    .choice:hover{transform:translateY(-4px)}
     .choice.is-correct{border-color:var(--accent)}
     .choice.is-wrong{border-color:var(--danger)}
-    .choice .thumb{height:350px;display:flex;align-items:center;justify-content:center;background:#f8fafc;border-radius:25px 25px 0 0;overflow:hidden}
+    .choice[disabled]{opacity:.5;filter:grayscale(.1);cursor:not-allowed}
+    .choice .thumb{height:200px;display:flex;align-items:center;justify-content:center;background:#f8fafc;border-radius:14px 14px 0 0;overflow:hidden}
     .choice .thumb img{max-width:100%;max-height:100%}
-    .choice .label{padding:25px 30px;font-weight:700;text-align:center;font-size:2rem}
+    .choice .label{padding:14px 16px;font-weight:700;text-align:center}
 
-    .footer{display:flex;justify-content:space-between;align-items:center;margin-top:40px;color:var(--muted);font-size:1.8rem}
+    /* اهتزاز خطأ */
+    @keyframes shakeX {0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+    .shake{animation:shakeX .35s ease}
 
-    .result{display:none;text-align:center;padding:60px;font-size:2rem}
-    .result h2{font-size:3.2rem;margin:0 0 30px}
-    .result .stats{display:flex;flex-wrap:wrap;gap:30px;justify-content:center;margin-top:30px}
-    .stat{background:#f8fafc;border:2px solid #e0f2ff;border-radius:25px;padding:25px 35px;font-size:1.8rem}
+    .result{display:none;text-align:center;padding:40px;font-size:1.6rem}
+    .result h2{font-size:2.4rem;margin:0 0 20px}
+    .stats{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:16px}
+    .stat{background:#f8fafc;border:2px solid #e0f2ff;border-radius:18px;padding:14px 18px;font-size:1.4rem}
 
-    .happy-img, .sad-img {position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; z-index: 999; width: min(500px, 70vw); height: auto; max-height: 70vh}
-
-    #clapOverlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(240,248,255,.6);z-index:1100}
-    #clapOverlay img{width:420px;height:420px;animation:pulse .7s ease-in-out infinite alternate}
-    #feedbackOverlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,.35);z-index:1100}
-    #feedbackOverlay .box{background:#fff;border-radius:28px;box-shadow:var(--shadow);padding:30px 36px;text-align:center;max-width:720px}
-    #feedbackOverlay img{width:280px;height:280px;object-fit:contain}
-    #feedbackOverlay .msg{margin-top:16px;color:#0f172a;font-weight:700}
+    /* صور وتأثيرات */
+    .happy-img, .sad-img {position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; z-index: 1202; width: min(420px, 70vw); height: auto; max-height: 70vh}
+    #clapOverlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(240,248,255,.6);z-index:1201}
+    #clapOverlay img{width:360px;height:360px;animation:pulse .7s ease-in-out infinite alternate}
     @keyframes pulse{from{transform:scale(.92)}to{transform:scale(1.06)}}
 
-    @media (max-width: 640px){
+    /* قوس قزح + نجوم */
+    #celebrate{pointer-events:none;position:fixed;inset:0;z-index:1200}
+    #celebrate #rainbow{position:absolute;left:0;right:0;top:-120vh;height:120vh;opacity:.85;filter:saturate(1.2) blur(1px);background:linear-gradient(180deg,#ff3b30,#ff9500,#ffd60a,#34c759,#64d2ff,#0a84ff,#bf5af2);transform:translateY(-120vh)}
+    .rainbow-run{animation:rainbowDrop 1.3s ease-out forwards}
+    @keyframes rainbowDrop{0%{transform:translateY(-120vh)}70%{transform:translateY(20vh)}100%{transform:translateY(120vh);opacity:0}}
+    .star{position:absolute;font-size:32px;opacity:0;filter:drop-shadow(0 6px 6px rgba(0,0,0,.15));will-change:transform,opacity;}
+    @keyframes starFall{0%{transform:translateY(-40px) scale(.6) rotate(0deg);opacity:0}10%{opacity:1}70%{transform:translateY(60vh) scale(1) rotate(160deg)}100%{transform:translateY(100vh) scale(.9) rotate(260deg);opacity:0}}
+
+    /* ولد يرقص */
+    @keyframes dance {0%{transform:translate(-50%,-50%) rotate(0) scale(1)}50%{transform:translate(-50%,-50%) rotate(8deg) scale(1.08)}100%{transform:translate(-50%,-50%) rotate(0) scale(1);opacity:0}}
+    .dance-run{animation:dance 1.6s ease-in-out forwards;filter:drop-shadow(0 10px 25px rgba(0,0,0,.18));}
+
+    /* Toast */
+    #toast{position:fixed; left:50%; top:24px; transform:translateX(-50%) translateY(-20px); background:#ffffff; color:#0f172a; border:2px solid #e2e8f0; border-radius:16px; padding:12px 18px; box-shadow:0 10px 24px rgba(2,6,23,.12); font-size:1.4rem; z-index:1305; opacity:0; pointer-events:none; display:flex; align-items:center; gap:10px; white-space:nowrap;}
+    #toast.ok{border-color:#86efac}
+    #toast.err{border-color:#fecaca}
+    .toast-show{animation:toastIn .25s ease-out forwards}
+    .toast-hide{animation:toastOut .25s ease-in forwards}
+    @keyframes toastIn{from{opacity:0; transform:translateX(-50%) translateY(-20px)} to{opacity:1; transform:translateX(-50%) translateY(0)}}
+    @keyframes toastOut{from{opacity:1; transform:translateX(-50%) translateY(0)} to{opacity:0; transform:translateX(-50%) translateY(-20px)}}
+
+    @media (max-width:640px){
       body{font-size:1.4rem}
-      .container{padding:calc(18px + env(safe-area-inset-left));}
-      header{flex-direction:column;gap:10px;align-items:flex-start}
-      h1{font-size:2.2rem}
-      .chip{font-size:1.2rem;padding:10px 16px}
-      .card{padding:22px}
-      .hud{flex-direction:column;gap:12px;align-items:stretch}
-      .progress{height:14px;margin-bottom:18px}
-      .question{font-size:2rem;margin:18px 0}
-      .grid{grid-template-columns:repeat(2,1fr);gap:16px}
-      .choice{border-width:3px;border-radius:18px;padding-bottom:6px}
+      .container{padding:20px}
+      .question{font-size:2.2rem}
+      #cardBoard{grid-template-columns:repeat(2,1fr);gap:14px}
+      .qcard{min-height:200px}
       .choice .thumb{height:170px}
-      .choice .label{padding:12px 10px;font-size:1.4rem}
-      .footer{flex-direction:column;gap:10px;align-items:stretch;margin-top:16px}
-      .btn{width:100%;padding:16px 18px;font-size:1.2rem}
-      .start-card{padding:24px;max-width:95vw}
-      .name-row{flex-direction:column}
-      .name-row input{min-width:unset;width:100%}
+      .btn{padding:16px 18px;font-size:1.2rem}
+      .qcard .centerMark .num{ font-size:3.6rem }
+      .qcard .centerMark img{ width:64px; height:64px }
     }
+
+    /* لوحة الإعدادات المتقدمة */
+    #adminPanel{ display:none; position:fixed; inset:0; background:rgba(15,23,42,.35); z-index:1300; align-items:center; justify-content:center; padding:20px; }
+    #adminBox{ background:#fff; width:min(1000px,95vw); max-height:90vh; overflow:auto; border-radius:24px; box-shadow:var(--shadow); padding:20px; }
+    #adminBox h3{ margin:0; font-size:1.4rem; color:#0f172a }
+    #qJson{
+      width:100%; min-height:340px; padding:14px 16px; border:1px solid #e5e7eb; border-radius:14px;
+      background:#fbfdff; font-family:ui-monospace, Menlo, Consolas, monospace;
+      font-size:0.95rem; line-height:1.6; direction:ltr; text-align:left; box-shadow:inset 0 1px 0 rgba(2,6,23,.02); margin-top:8px;
+    }
+    #adminBox .row{ display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:12px; align-items:end; margin-top:12px; }
+    #adminBox .row label{ display:flex; align-items:center; gap:10px; background:#f8fafc; border:1px solid #e5e7eb; padding:10px 12px; border-radius:12px; color:#334155; font-size:0.95rem; }
+    #adminBox .row input[type="number"], #adminBox .row input[type="text"], #adminBox .row select{ width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:10px; background:#fff; font-size:0.95rem; }
+    .admin-actions{ display:flex; flex-wrap:wrap; gap:10px; margin:12px 0 6px; }
+    .admin-actions .btn{ padding:12px 16px; font-size:1rem; border-radius:12px }
+    .tiny{ font-size:.85rem; color:#64748b }
   </style>
 </head>
 <body>
@@ -99,208 +141,521 @@
   <section id="start">
     <div class="start-card">
       <div style="font-size:4rem">🌟</div>
-      <h2 class="start-title">لعبة الأسئلة الممتعة للأطفال</h2>
-      <p class="start-sub">مرحبًا بك! اكتب اسمك ثم اضغط ابدأ اللعب</p>
+      <h2 class="start-title">لعبة بطاقات الأسئلة الممتعة</h2>
+      <p class="start-sub">اكتب اسمك ثم اضغط ابدأ اللعب</p>
       <div class="name-row">
         <input id="playerName" type="text" placeholder="اكتب اسمك يا بطل" />
         <button class="btn primary" id="goBtn">ابدأ اللعب</button>
       </div>
-      <div class="music-tip">يمكنك كتم الصوت لاحقًا من الزر أعلى الصفحة.</div>
     </div>
   </section>
 
   <div class="container">
     <header>
-      <h1>🎮 لعبة أسئلة الأطفال <span class="chip">v3.2</span></h1>
-      <button class="btn ghost" id="muteBtn" title="كتم/تشغيل الصوت">🔊 الصوت</button>
-    </header>
-
-    <section id="setup" class="card setup" style="display:none">
-      <div class="row">
-        <div class="grow">
-          <label>أسئلة اللعبة (JSON):</label>
-          <textarea id="questionsJson" spellcheck="false">[
-  {"question":"ما الحيوان الذي يقول مواء؟","answers":[{"text":"قطة","image":"https://cdn-icons-png.flaticon.com/512/1998/1998592.png","isCorrect":true},{"text":"كلب","image":"https://cdn-icons-png.flaticon.com/512/1998/1998673.png","isCorrect":false},{"text":"بقرة","image":"https://cdn-icons-png.flaticon.com/512/1998/1998610.png","isCorrect":false}]},
-  {"question":"ما الفاكهة التي لونها أصفر؟","answers":[{"text":"موز","image":"https://cdn-icons-png.flaticon.com/512/415/415733.png","isCorrect":true},{"text":"تفاح","image":"https://cdn-icons-png.flaticon.com/512/742/742751.png","isCorrect":false},{"text":"عنب","image":"https://cdn-icons-png.flaticon.com/512/766/766013.png","isCorrect":false}]},
-  {"question":"أين نرى القمر؟","answers":[{"text":"في السماء","image":"https://cdn-icons-png.flaticon.com/512/1146/1146869.png","isCorrect":true},{"text":"في البحر","image":"https://cdn-icons-png.flaticon.com/512/3075/3075977.png","isCorrect":false},{"text":"على الأرض","image":"https://cdn-icons-png.flaticon.com/512/9131/9131530.png","isCorrect":false}]},
-  {"question":"ما الشيء الذي نستخدمه في الكتابة؟","answers":[{"text":"قلم","image":"https://cdn-icons-png.flaticon.com/512/2647/2647789.png","isCorrect":true},{"text":"ممحاة","image":"https://cdn-icons-png.flaticon.com/512/4221/4221403.png","isCorrect":false},{"text":"مقص","image":"https://cdn-icons-png.flaticon.com/512/3131/3131607.png","isCorrect":false}]},
-  {"question":"ما الحيوان الذي يطير؟","answers":[{"text":"طائر","image":"https://cdn-icons-png.flaticon.com/512/1998/1998617.png","isCorrect":true},{"text":"أسد","image":"https://cdn-icons-png.flaticon.com/512/1998/1998627.png","isCorrect":false},{"text":"سمكة","image":"https://cdn-icons-png.flaticon.com/512/1998/1998676.png","isCorrect":false}]},
-  {"question":"ما لون العشب؟","answers":[{"text":"أخضر","image":"https://cdn-icons-png.flaticon.com/512/2913/2913399.png","isCorrect":true},{"text":"أزرق","image":"https://cdn-icons-png.flaticon.com/512/2913/2913382.png","isCorrect":false},{"text":"أحمر","image":"https://cdn-icons-png.flaticon.com/512/2913/2913385.png","isCorrect":false}]},
-  {"question":"ما وسيلة النقل التي تطير في السماء؟","answers":[{"text":"طائرة","image":"https://cdn-icons-png.flaticon.com/512/3078/3078951.png","isCorrect":true},{"text":"سيارة","image":"https://cdn-icons-png.flaticon.com/512/743/743007.png","isCorrect":false},{"text":"دراجة","image":"https://cdn-icons-png.flaticon.com/512/201/201818.png","isCorrect":false}]},
-  {"question":"أين نعيش نحن البشر؟","answers":[{"text":"على الأرض","image":"https://cdn-icons-png.flaticon.com/512/9131/9131530.png","isCorrect":true},{"text":"في القمر","image":"https://cdn-icons-png.flaticon.com/512/869/869869.png","isCorrect":false},{"text":"في البحر","image":"https://cdn-icons-png.flaticon.com/512/3075/3075977.png","isCorrect":false}]},
-  {"question":"ما الحيوان الذي يعيش في الماء وله ذيل؟","answers":[{"text":"سمكة","image":"https://cdn-icons-png.flaticon.com/512/1998/1998676.png","isCorrect":true},{"text":"نمر","image":"https://cdn-icons-png.flaticon.com/512/1998/1998679.png","isCorrect":false},{"text":"جمل","image":"https://cdn-icons-png.flaticon.com/512/1998/1998612.png","isCorrect":false}]},
-  {"question":"ما الشيء الذي نستخدمه لنشرب الماء؟","answers":[{"text":"كوب","image":"https://cdn-icons-png.flaticon.com/512/1047/1047505.png","isCorrect":true},{"text":"طبق","image":"https://cdn-icons-png.flaticon.com/512/706/706164.png","isCorrect":false},{"text":"ملعقة","image":"https://cdn-icons-png.flaticon.com/512/706/706195.png","isCorrect":false}]}
-]</textarea>
-          <div class="controls">
-            <input id="limit" type="number" min="1" step="1" placeholder="عدد الأسئلة (اختياري)" />
-            <button class="btn primary" id="startBtn">ابدأ الاختبار الآن</button>
-          </div>
-        </div>
+      <h1>🎮 أسئلة الأطفال <span class="chip">بطاقات</span></h1>
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="btn ghost" id="adminBtn" title="إعدادات متقدمة">⚙️ إعدادات متقدمة</button>
       </div>
-    </section>
+    </header>
 
     <section id="game" class="card" style="display:none">
       <div class="hud">
         <div class="pill" id="timer">⏱️ 00:00</div>
-        <div class="pill" id="firstTry">من أول مرة: 0</div>
-        <div class="pill" id="wrongHud">❌ غير من أول مرة: 0 (0%)</div>
-        <div class="pill" id="qIndex">السؤال 1/1</div>
+        <div class="pill" id="firstTry">✅ بطاقات صحيحة: 0</div>
+        <div class="pill" id="wrongHud">❌ محاولات خاطئة: 0</div>
+        <div class="pill" id="qIndex">بطاقات متبقية: 0</div>
       </div>
       <div class="progress"><div id="progressBar"></div></div>
-      <div class="question" id="questionText">…</div>
-      <div class="grid" id="choices"></div>
-      <div class="footer">
-        <div>اختر الإجابة الصحيحة. عند الخطأ يمكنك المحاولة مرة أخرى.</div>
-        <button class="btn ghost" id="restart">🔁 إعادة من البداية</button>
+      <div id="cardBoard"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;color:#64748b">
+        <div>اختر بطاقة، أجب، إن كانت خاطئة جرّب مرة أخرى. تختفي البطاقة عند الإجابة الصحيحة.</div>
+        <button class="btn ghost" id="restart">🔁 إعادة</button>
       </div>
     </section>
 
-    <section id="result" class="card result">
-      <h2 id="resultTitle">🎉 أحسنت! لقد أنهيت جميع الأسئلة</h2>
+    <section id="result" class="card" style="display:none;text-align:center">
+      <h2 id="resultTitle">🎉 أحسنت! لقد أنهيت جميع البطاقات</h2>
       <p id="resultText">…</p>
       <div class="stats">
         <div class="stat">⏱️ الوقت المستغرق: <b id="resultTime">00:00</b></div>
-        <div class="stat">✅ من أول محاولة: <b id="resultFirstTries">0</b></div>
-        <div class="stat">📚 عدد الأسئلة: <b id="resultTotal">0</b></div>
-        <div class="stat">❌ أسئلة لم تُجب من أول مرة: <b id="resultWrongCount">0</b></div>
-        <div class="stat">📊 النسبة المئوية للأسئلة الخاطئة: <b id="resultWrongPercent">0%</b></div>
+        <div class="stat">✅ بطاقات صحيحة: <b id="resultFirstTries">0</b></div>
+        <div class="stat">📚 عدد البطاقات: <b id="resultTotal">0</b></div>
+        <div class="stat">❌ إجمالي المحاولات الخاطئة: <b id="resultWrongCount">0</b></div>
       </div>
-      <div style="margin-top:40px;display:flex;gap:30px;justify-content:center">
+      <div style="margin-top:28px;display:flex;gap:16px;justify-content:center">
         <button class="btn primary" id="playAgain">🎯 العب مرة أخرى</button>
-        <button class="btn ghost" id="backToSetup">⚙️ رجوع للإعداد</button>
       </div>
     </section>
   </div>
 
+  <!-- مودال السؤال -->
+  <div id="qModal" aria-hidden="true">
+    <div id="qBox">
+      <div id="qHead"><h3 id="qTitle">السؤال</h3></div>
+      <div id="qBody">
+        <div class="question" id="questionText">…</div>
+        <div class="grid" id="choices"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- تأثيرات -->
   <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" class="happy-img" id="happyImg" alt="happy boy">
   <img src="https://cdn-icons-png.flaticon.com/512/4140/4140037.png" class="sad-img" id="sadImg" alt="sad boy">
   <div id="clapOverlay"><img src="https://cdn-icons-png.flaticon.com/512/3159/3159310.png" alt="تصفيق"></div>
-  <div id="feedbackOverlay"><div class="box"><img id="feedbackImg" src="" alt="تشجيع"><div id="feedbackMsg" class="msg"></div><button id="feedbackOk" class="btn primary" style="margin-top:18px">حسنًا</button></div></div>
+  <div id="celebrate" aria-hidden="true"><div id="rainbow"></div></div>
+  <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" id="danceBoy" alt="ولد يرقص"
+       style="display:none; position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); width:min(420px,70vw); height:auto; z-index:1203;">
+
+  <!-- Toast -->
+  <div id="toast"><span id="toastIcon">🎉</span><span id="toastMsg">...</span></div>
+
+  <!-- صوت ملفّي قصير (يعمل بدون ويندوز/TTS) -->
+<audio id="okVoice" preload="auto" playsinline></audio>
+
+  <!-- لوحة الإعدادات المتقدمة -->
+  <div id="adminPanel">
+    <div id="adminBox">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:12px">
+        <h3>⚙️ إعدادات متقدمة للصف الثاني الابتدائي</h3>
+        <button class="btn ghost" id="adminClose">إغلاق</button>
+      </div>
+      <p class="tiny">عدّل بنك الأسئلة بصيغة JSON (question + answers[{text,image,isCorrect}]).</p>
+      <textarea id="qJson" spellcheck="false"></textarea>
+      <div class="row" style="margin-top:10px">
+        <label class="switch"><input type="checkbox" id="optShuffle" checked> عشوائية ترتيب البطاقات والخيارات</label>
+        <label>الحد الأقصى للبطاقات: <input type="number" id="optLimit" min="1" step="1" placeholder="بدون حد"></label>
+      </div>
+      <div class="admin-actions">
+        <button class="btn primary" id="applyBtn">تطبيق على اللعبة</button>
+        <button class="btn ghost" id="exportBtn">📤 تصدير JSON</button>
+        <input type="file" id="importFile" accept="application/json" style="display:none">
+        <button class="btn ghost" id="importBtn">📥 استيراد JSON</button>
+        <button class="btn ghost" id="resetBtn" title="استعادة الافتراضي">استعادة الافتراضي</button>
+
+        <!-- تعيين/إزالة صوت التشجيع -->
+        <input type="file" id="okVoiceFile" accept="audio/*" style="display:none">
+        <button class="btn ghost" id="okVoicePick">🎙️ تعيين صوت التشجيع (MP3/OGG)</button>
+        <button class="btn ghost" id="okVoiceClear">🗑 إزالة الصوت</button>
+      </div>
+      <p class="tiny">يُحفظ الصوت محليًا ويعمل دون إنترنت. يُوقف تلقائيًا إن تجاوز 2.4 ثانية.</p>
+    </div>
+  </div>
 
   <script>
-    // لا نستخدم أي تعبيرات منتظمة هنا لتفادي الخطأ
-    function qs(sel, root){ return (root||document).querySelector(sel); }
-    function shuffle(arr){ return arr.slice().sort(function(){ return Math.random()-0.5; }); }
+    function qs(s, r){return (r||document).querySelector(s)}
+    function shuffle(arr){return arr.slice().sort(function(){return Math.random()-0.5})}
+    function rand(arr){return arr[Math.floor(Math.random()*arr.length)]}
 
-    var QUESTIONS=[], current=0, firstTryCount=0, startAt=0, firstAttempt=true, playerName='', wrongCount=0, isMuted=false;
+    var QUESTIONS=[], CARDS=[], answered=0, correctCount=0, wrongAttempts=0, startAt=0, timerId=null, playerName='';
+    var ADMIN_CODE='1234';
 
-    // موسيقى خلفية بسيطة
-    var BGM=(function(){
-      var ctx = (window.AudioContext||window.webkitAudioContext)? new (window.AudioContext||window.webkitAudioContext)() : null;
-      var interval=null;
-      function tone(f,d,v){ if(isMuted||!ctx) return; var o=ctx.createOscillator(); var g=ctx.createGain(); o.type='sine'; o.frequency.value=f; o.connect(g); g.connect(ctx.destination); g.gain.setValueAtTime(0,ctx.currentTime); g.gain.linearRampToValueAtTime(v, ctx.currentTime+0.05); g.gain.linearRampToValueAtTime(0.0001, ctx.currentTime+d); o.start(); o.stop(ctx.currentTime+d); }
-      function tick(){ [523.25,659.25,783.99].forEach(function(f,i){ setTimeout(function(){ tone(f,0.35,0.05); }, i*180); }); }
-      return { start:function(){ if(isMuted||!ctx) return; if(ctx.state==='suspended') ctx.resume(); if(interval) return; tick(); interval=setInterval(tick,1500); }, stop:function(){ if(interval){ clearInterval(interval); interval=null; } } };
-    })();
+    /* صور مطابقة للنص */
+    var ICONS = {
+      'قطة':'https://cdn-icons-png.flaticon.com/512/1998/1998592.png',
+      'كلب':'https://cdn-icons-png.flaticon.com/512/1998/1998673.png',
+      'بقرة':'https://cdn-icons-png.flaticon.com/512/1998/1998610.png',
+      'أسد':'https://cdn-icons-png.flaticon.com/512/1998/1998627.png',
+      'طائر':'https://cdn-icons-png.flaticon.com/512/1998/1998617.png',
+      'سمكة':'https://cdn-icons-png.flaticon.com/512/1998/1998676.png',
+      'نمر':'https://cdn-icons-png.flaticon.com/512/1998/1998679.png',
+      'جمل':'https://cdn-icons-png.flaticon.com/512/1998/1998612.png',
+      'تفاح':'https://cdn-icons-png.flaticon.com/512/742/742751.png',
+      'موز':'https://cdn-icons-png.flaticon.com/512/415/415733.png',
+      'عنب':'https://cdn-icons-png.flaticon.com/512/766/766013.png',
+      'برتقال':'https://cdn-icons-png.flaticon.com/512/415/415734.png',
+      'فراولة':'https://cdn-icons-png.flaticon.com/512/135/135620.png',
+      'أخضر':'https://cdn-icons-png.flaticon.com/512/2913/2913399.png',
+      'أزرق':'https://cdn-icons-png.flaticon.com/512/2913/2913382.png',
+      'أحمر':'https://cdn-icons-png.flaticon.com/512/2913/2913385.png',
+      'أصفر':'https://cdn-icons-png.flaticon.com/512/2913/2913403.png',
+      'في السماء':'https://cdn-icons-png.flaticon.com/512/1146/1146869.png',
+      'في البحر':'https://cdn-icons-png.flaticon.com/512/3075/3075977.png',
+      'على الأرض':'https://cdn-icons-png.flaticon.com/512/9131/9131530.png',
+      'قلم':'https://cdn-icons-png.flaticon.com/512/2647/2647789.png',
+      'ممحاة':'https://cdn-icons-png.flaticon.com/512/4221/4221403.png',
+      'مقص':'https://cdn-icons-png.flaticon.com/512/3131/3131607.png'
+    };
 
-    var timerEl=qs('#timer'), firstTryEl=qs('#firstTry'), qIndexEl=qs('#qIndex'), progressBar=qs('#progressBar');
-    var timerId=null; function fmtTime(ms){ var s=Math.floor(ms/1000), m=Math.floor(s/60), r=s%60; return (m<10?'0'+m:m)+':' + (r<10?'0'+r:r); }
-    function startTimer(){ startAt=performance.now(); tick(); }
-    function tick(){ timerEl.textContent='⏱️ '+fmtTime(performance.now()-startAt); timerId=requestAnimationFrame(tick); }
-    function stopTimer(){ if(timerId) cancelAnimationFrame(timerId); timerId=null; }
-    function playSound(src){ if(isMuted) return; var a=new Audio(src); a.play(); }
+    /* رسائل */
+    var MSG_OK = [ 'رائع يا بطل!' ];
+    var MSG_ERR = [
+      'لا بأس، حاول مرة أخرى يا بطل! 💪',
+      'لا تيأس يا بطل، ستنجح! 🌟',
+      'أنت قادر عليها! جرّب مجددًا! 🙌'
+    ];
 
-    var happyImg=qs('#happyImg');
-    var sadImg=qs('#sadImg');
-    var clapOverlay=qs('#clapOverlay');
-    var feedbackOverlay=qs('#feedbackOverlay');
-    var feedbackImg=qs('#feedbackImg');
-    var feedbackMsg=qs('#feedbackMsg');
-    var feedbackOk=qs('#feedbackOk'); if(feedbackOk){ feedbackOk.onclick=function(){ feedbackOverlay.style.display='none'; }; }
+    /* مؤقت وHUD */
+    var timerEl=qs('#timer'), firstTryEl=qs('#firstTry'), wrongHudEl=qs('#wrongHud'), qIndexEl=qs('#qIndex'), progressBar=qs('#progressBar');
+    function fmtTime(ms){var s=Math.floor(ms/1000),m=Math.floor(s/60),r=s%60;return (m<10?'0'+m:m)+':'+(r<10?'0'+r:r)}
+    function startTimer(){startAt=performance.now(); tick()}
+    function tick(){timerEl.textContent='⏱️ '+fmtTime(performance.now()-startAt); timerId=requestAnimationFrame(tick)}
+    function stopTimer(){ if(timerId) cancelAnimationFrame(timerId); timerId=null }
 
-    function showHappy(){ happyImg.style.display='block'; setTimeout(function(){ happyImg.style.display='none'; }, 2000); }
-    function showSad(){ sadImg.style.display='block'; setTimeout(function(){ sadImg.style.display='none'; }, 2000); }
-    function showClap(){ clapOverlay.style.display='flex'; setTimeout(function(){ clapOverlay.style.display='none'; }, 1600); }
-    function showFeedback(img, msg){ feedbackImg.src=img; feedbackMsg.textContent=msg; feedbackOverlay.style.display='flex'; }
-
-    function updateHud(){
-      var answeredSoFar = current;
-      var wrongSoFar = Math.max(0, answeredSoFar - firstTryCount);
-      var wrongPercent = answeredSoFar>0 ? Math.round((wrongSoFar/answeredSoFar)*100) : 0;
-      qIndexEl.textContent='السؤال ' + Math.min(current+1, QUESTIONS.length) + '/' + QUESTIONS.length;
-      firstTryEl.textContent='من أول مرة: ' + firstTryCount;
-      var wrongHud=qs('#wrongHud'); if(wrongHud) wrongHud.textContent='❌ غير من أول مرة: ' + wrongSoFar + ' (' + wrongPercent + '%)';
-      progressBar.style.width = Math.round((current/QUESTIONS.length)*100) + '%';
+    /* تأثيرات مرئية */
+    function showHappy(){ var el=qs('#happyImg'); el.style.display='block'; setTimeout(function(){ el.style.display='none'},1500) }
+    function showSad(){ var el=qs('#sadImg'); el.style.display='block'; setTimeout(function(){ el.style.display='none'},900) }
+    function showClap(){ var el=qs('#clapOverlay'); el.style.display='flex'; setTimeout(function(){ el.style.display='none'},1300) }
+    function celebrateRainbowStars(){
+      var wrap=qs('#celebrate'), rainbow=qs('#rainbow'); if(!wrap||!rainbow) return;
+      rainbow.classList.remove('rainbow-run'); void rainbow.offsetWidth; rainbow.classList.add('rainbow-run');
+      Array.from(wrap.querySelectorAll('.star')).forEach(function(n){n.remove()});
+      for(var i=0;i<18;i++){ var s=document.createElement('div'); s.className='star';
+        s.textContent=(Math.random()<0.33?'✨':(Math.random()<0.5?'⭐':'🌟'));
+        s.style.left=Math.round(Math.random()*95)+'%'; s.style.top='-20px'; s.style.fontSize=(24+Math.random()*22)+'px';
+        var delay=(Math.random()*0.3).toFixed(2)+'s', dur=(1.1+Math.random()*0.8).toFixed(2)+'s';
+        s.style.animation='starFall '+dur+' ease-out '+delay+' forwards'; wrap.appendChild(s);
+      }
+      setTimeout(function(){ Array.from(wrap.querySelectorAll('.star')).forEach(function(n){n.remove()}) }, 2200);
+    }
+    function showDanceBoy(){
+      var el=qs('#danceBoy'); if(!el) return;
+      el.style.display='block'; el.classList.remove('dance-run'); void el.offsetWidth; el.classList.add('dance-run');
+      setTimeout(function(){ el.style.display='none' },1650);
     }
 
-    function renderQuestion(){
-      var q=QUESTIONS[current];
-      if(!q){ finish(); return; }
-      qs('#questionText').textContent=q.question;
-      var host=qs('#choices'); host.innerHTML=''; wrongCount=0;
-      (q.answers||[]).forEach(function(a){
+    /* Toast */
+    var toast = null, toastMsg=null, toastIcon=null, toastTimer=null;
+    function setupToast(){ toast=qs('#toast'); toastMsg=qs('#toastMsg'); toastIcon=qs('#toastIcon'); }
+    function showToast(message, kind){
+      if(!toast) setupToast();
+      toast.classList.remove('ok','err','toast-hide'); toast.classList.add(kind||'ok');
+      toastMsg.textContent = message || '';
+      toastIcon.textContent = (kind==='err' ? '💡' : '🎉');
+      toast.style.opacity='0'; toast.style.display='flex';
+      void toast.offsetWidth;
+      toast.classList.add('toast-show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function(){
+        toast.classList.remove('toast-show'); toast.classList.add('toast-hide');
+        setTimeout(function(){ toast.style.display='none'; }, 240);
+      }, 1400);
+    }
+
+    /* بطاقة السؤال (واجهة) */
+    var QMARK = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160"><rect width="100%25" height="100%25" rx="28" ry="28" fill="%23e6f3ff"/><text x="50%25" y="54%25" dominant-baseline="middle" text-anchor="middle" font-size="110" font-family="Cairo,Arial,sans-serif" fill="%230c4a6e">؟</text></svg>';
+
+    function buildBoard(){
+      var board=qs('#cardBoard'); board.innerHTML='';
+      CARDS=QUESTIONS.map(function(q,idx){
+        var c=document.createElement('button'); c.className='qcard'; c.setAttribute('data-i',idx);
+        c.innerHTML='<div class="centerMark"><div class="num">'+(idx+1)+'</div><img src="'+QMARK+'" alt="سؤال ؟"></div>';
+        c.onclick=function(){ openQuestion(idx,c) };
+        board.appendChild(c); return c;
+      });
+      updateHud();
+    }
+    function updateHud(){
+      var total=QUESTIONS.length, remain=total-answered;
+      firstTryEl.textContent='✅ بطاقات صحيحة: '+correctCount;
+      wrongHudEl.textContent='❌ محاولات خاطئة: '+wrongAttempts;
+      qIndexEl.textContent='بطاقات متبقية: '+remain;
+      progressBar.style.width = Math.round((answered/Math.max(1,total))*100) + '%';
+    }
+
+    function openQuestion(index, cardEl){
+      var q=QUESTIONS[index]; if(!q) return;
+      var modal=qs('#qModal'); var title=qs('#qTitle'); var qText=qs('#questionText'); var host=qs('#choices');
+      title.textContent='السؤال #' + (index+1);
+      qText.textContent=q.question;
+      host.innerHTML='';
+      q.answers.forEach(function(a){
+        var src = ICONS[a.text] || a.image || '';
         var b=document.createElement('button'); b.className='choice';
-        var imgHtml = a.image ? "<img src='"+a.image+"' alt='"+a.text+"'>" : '🎲';
-        b.innerHTML = "<div class='thumb'>"+imgHtml+"</div><div class='label'>"+a.text+"</div>";
-        b.onclick=function(){ onAnswer(b, !!a.isCorrect); };
+        var imgHtml = src ? "<img src='"+src+"' alt='"+a.text+"'>" : '🎲';
+        b.innerHTML="<div class='thumb'>"+imgHtml+"</div><div class='label'>"+a.text+"</div>";
+        b.onclick=function(){ answerWithRetries(b, !!a.isCorrect, cardEl, index) };
         host.appendChild(b);
       });
-      updateHud(); firstAttempt=true;
+      modal.style.display='flex';
     }
 
-    function onAnswer(btn, ok){
+ // ===== صوت ملفّي قصير — موثوق ويعمل على كل المتصفحات =====
+var MAX_TTS_MS = 2400; // حد أقصى للتشغيل 2.4 ثانية
+var okVoiceEl = document.getElementById('okVoice');
+
+// افتراضي قوي (≈ 2 ث) — يمكنك استبداله لاحقًا برفع ملفك (يُخزن محليًا)
+var DEFAULT_OK_MP3 = "https://cdn.pixabay.com/download/audio/2022/03/15/audio_6f2c6e-children-yay-18527.mp3?filename=children-yay-18527.mp3";
+
+// تهيئة المصدر: إن وُجد ملف مرفوع محليًا (Base64) نستخدمه، وإلا نستخدم الافتراضي
+(function initOkVoice(){
+  try{
+    var saved = localStorage.getItem('OK_VOICE_SRC');
+    okVoiceEl.src = saved ? saved : DEFAULT_OK_MP3;
+    okVoiceEl.preload = 'auto';
+    okVoiceEl.muted = false;
+    okVoiceEl.volume = 1;
+    // إجبار تحميل مبكر
+    okVoiceEl.load();
+  }catch(e){}
+})();
+
+function setOkVoice(src){
+  try{
+    okVoiceEl.src = src;            // Base64 من الرفع
+    okVoiceEl.preload = 'auto';
+    okVoiceEl.muted = false;
+    okVoiceEl.volume = 1;
+    okVoiceEl.load();
+    localStorage.setItem('OK_VOICE_SRC', src);
+  }catch(e){}
+}
+
+// تشغيل الصوت مع حارس زمني + بديل عند الفشل
+function playOkVoiceThen(next){
+  var el = okVoiceEl;
+  if(!el || !el.src){ if(next) next(); return; }
+
+  var finished = false;
+  function done(){
+    if(finished) return;
+    finished = true;
+    try{ el.pause(); }catch(e){}
+    if(next) next();
+  }
+  var guard = setTimeout(done, MAX_TTS_MS);
+
+  function tryPlayElement(){
+    try{
+      el.currentTime = 0;
+      el.onended = function(){ clearTimeout(guard); done(); };
+      var p = el.play();
+      if(p && typeof p.then === 'function'){
+        p.then(function(){}).catch(function(){ playFallback(); });
+      }
+    }catch(e){ playFallback(); }
+  }
+
+  // لو ما صار جاهز — انتظر حدث التحميل
+  if(el.readyState < 2){
+    var once = function(){
+      el.removeEventListener('canplaythrough', once);
+      el.removeEventListener('loadeddata', once);
+      tryPlayElement();
+    };
+    el.addEventListener('canplaythrough', once, {once:true});
+    el.addEventListener('loadeddata', once, {once:true});
+    try{ el.load(); }catch(e){}
+  }else{
+    tryPlayElement();
+  }
+
+  // بديل: إنشاء Audio مؤقت بنفس المصدر (يحل مشاكل متصفحات معينة)
+  function playFallback(){
+    try{
+      var tmp = new Audio(el.src);
+      tmp.playsInline = true;
+      tmp.muted = false;
+      tmp.volume = 1;
+      tmp.preload = 'auto';
+      tmp.onended = function(){ clearTimeout(guard); done(); };
+      var pp = tmp.play();
+      if(pp && typeof pp.then === 'function'){
+        pp.then(function(){}).catch(function(){ clearTimeout(guard); done(); });
+      }
+    }catch(e){ clearTimeout(guard); done(); }
+  }
+}
+
+
+    function answerWithRetries(btn, ok, cardEl, index){
+      var choicesWrap=qs('#choices');
       if(ok){
-        btn.classList.add('is-correct');
-        if(firstAttempt) firstTryCount++;
-        showHappy(); showClap(); playSound('https://www.soundjay.com/human/applause-2.mp3');
-        setTimeout(function(){ current++; renderQuestion(); if(current>QUESTIONS.length-1) finish(); }, 1600);
-      } else {
-        btn.classList.add('is-wrong'); firstAttempt=false; wrongCount++;
-        if(wrongCount===1){ showFeedback('https://cdn-icons-png.flaticon.com/512/4140/4140048.png', 'لا بأس، حاول مرة أخرى'); playSound('https://www.soundjay.com/buttons/sounds/button-10.mp3'); }
-        else if(wrongCount===2){ showFeedback('https://cdn-icons-png.flaticon.com/512/4140/4140051.png', 'أثق فيك، حاول مرة أخرى يا بطل'); playSound('https://www.soundjay.com/buttons/sounds/button-7.mp3'); }
-        else { showFeedback('https://cdn-icons-png.flaticon.com/512/4140/4140031.png', 'يمكن الاجتهاد والجد في المرة القادمة'); playSound('https://www.soundjay.com/human/sad-trombone-2.mp3'); setTimeout(function(){ feedbackOverlay.style.display='none'; current++; renderQuestion(); }, 1800); }
-        setTimeout(function(){ btn.classList.remove('is-wrong'); }, 800);
+        choicesWrap.querySelectorAll('.choice').forEach(function(ch){ ch.disabled=true });
+        btn.classList.add('is-correct'); cardEl.classList.add('correct');
+        correctCount++; answered++;
+
+        var msgOk = rand(MSG_OK);
+        showHappy(); showClap(); celebrateRainbowStars(); showDanceBoy();
+        showToast(msgOk, 'ok');
+
+        // شغّل الصوت القصير ثم انتقل
+playOkVoiceThen(function(){
+  var modal = qs('#qModal');
+  if(cardEl && cardEl.parentNode){ cardEl.classList.add('done'); cardEl.remove(); }
+  updateHud();
+  modal.style.display = 'none';
+  if(answered >= QUESTIONS.length){ finish(); }
+});
+
+      }else{
+        btn.classList.add('is-wrong','shake');
+        btn.disabled=true;
+        setTimeout(function(){ btn.classList.remove('shake') }, 350);
+        wrongAttempts++;
+
+        var msgErr = rand(MSG_ERR);
+        showSad();
+        showToast(msgErr, 'err');
+        setTimeout(function(){ updateHud(); btn.disabled=false; }, 900);
       }
     }
 
     function finish(){
       stopTimer();
       var total=QUESTIONS.length||1;
-      var wrongCountOverall = total - firstTryCount;
-      var wrongPercent = Math.round((wrongCountOverall/total)*100);
       qs('#resultTime').textContent=fmtTime(performance.now()-startAt);
-      qs('#resultFirstTries').textContent=firstTryCount;
+      qs('#resultFirstTries').textContent=correctCount;
       qs('#resultTotal').textContent=total;
-      qs('#resultWrongCount').textContent=wrongCountOverall;
-      qs('#resultWrongPercent').textContent=wrongPercent + '%';
-      var congratsName = playerName ? ('أحسنت يا ' + playerName + '!') : 'أحسنت!';
-      qs('#resultTitle').textContent = '🎉 ' + congratsName + ' لقد أنهيت جميع الأسئلة';
-      qs('#resultText').textContent = (firstTryCount===total) ? 'مذهل! أجبت على جميع الأسئلة من أول مرة 👏' : 'أحسنت! واصل التدريب لتحقق نتيجة أعلى.';
+      qs('#resultWrongCount').textContent=wrongAttempts;
+      var congrats = playerName ? ('🎉 أحسنت يا '+playerName+'!') : '🎉 أحسنت!';
+      qs('#resultTitle').textContent = congrats + ' لقد أنهيت جميع البطاقات';
+      qs('#resultText').textContent = (wrongAttempts===0) ? 'مذهل! لم تُخطئ أي محاولة 👏' : 'عمل رائع! المحاولات علمتنا الطريق الصحيح 💪';
       qs('#game').style.display='none';
       qs('#result').style.display='block';
-      playSound('https://www.soundjay.com/human/kids-cheering.mp3');
-      if(!isMuted) BGM.start();
     }
 
-    // بدء اللعبة من شاشة الإعداد
-    qs('#startBtn').onclick=function(){
-      var data; try{ data=JSON.parse(qs('#questionsJson').value); } catch(e){ alert('JSON غير صالح'); return; }
-      if(!data || !data.length) return; var limit=parseInt(qs('#limit').value||data.length,10);
-      QUESTIONS = shuffle(data).slice(0,limit).map(function(q){ q.answers = shuffle(q.answers); return q; });
-      current=0; firstTryCount=0; firstAttempt=true;
-      qs('#setup').style.display='none'; qs('#game').style.display='block'; BGM.stop(); startTimer(); renderQuestion();
+    /* بيانات افتراضية */
+    var DEFAULT_QUESTIONS = [
+      {"question":"ما الحيوان الذي يقول مواء؟","answers":[
+        {"text":"قطة","image":"https://cdn-icons-png.flaticon.com/512/1998/1998592.png","isCorrect":true},
+        {"text":"كلب","image":"https://cdn-icons-png.flaticon.com/512/1998/1998673.png","isCorrect":false},
+        {"text":"بقرة","image":"https://cdn-icons-png.flaticon.com/512/1998/1998610.png","isCorrect":false}
+      ]},
+      {"question":"ما الفاكهة التي لونها أصفر؟","answers":[
+        {"text":"موز","image":"https://cdn-icons-png.flaticon.com/512/415/415733.png","isCorrect":true},
+        {"text":"تفاح","image":"https://cdn-icons-png.flaticon.com/512/742/742751.png","isCorrect":false},
+        {"text":"عنب","image":"https://cdn-icons-png.flaticon.com/512/766/766013.png","isCorrect":false}
+      ]},
+      {"question":"أين نرى القمر؟","answers":[
+        {"text":"في السماء","image":"https://cdn-icons-png.flaticon.com/512/1146/1146869.png","isCorrect":true},
+        {"text":"في البحر","image":"https://cdn-icons-png.flaticon.com/512/3075/3075977.png","isCorrect":false},
+        {"text":"على الأرض","image":"https://cdn-icons-png.flaticon.com/512/9131/9131530.png","isCorrect":false}
+      ]},
+      {"question":"ما الشيء الذي نستخدمه في الكتابة؟","answers":[
+        {"text":"قلم","image":"https://cdn-icons-png.flaticon.com/512/2647/2647789.png","isCorrect":true},
+        {"text":"ممحاة","image":"https://cdn-icons-png.flaticon.com/512/4221/4221403.png","isCorrect":false},
+        {"text":"مقص","image":"https://cdn-icons-png.flaticon.com/512/3131/3131607.png","isCorrect":false}
+      ]}
+    ];
+
+    /* إعدادات الأدمن */
+    var adminBtn=qs('#adminBtn'), adminClose=null,
+        qJson=qs('#qJson'), optShuffle=qs('#optShuffle'), optLimit=qs('#optLimit'),
+        applyBtn=qs('#applyBtn'), exportBtn=qs('#exportBtn'), importBtn=qs('#importBtn'),
+        importFile=qs('#importFile'), resetBtn=qs('#resetBtn');
+
+    function parseQuestions(){
+      try{
+        var data = JSON.parse(qJson.value);
+        if(!Array.isArray(data) || !data.length) throw new Error('قائمة أسئلة فارغة');
+        return data;
+      }catch(e){ alert('JSON غير صالح: '+ e.message); return null; }
+    }
+    function saveAdminState(){
+      localStorage.setItem('ADMIN_QUESTIONS', qJson.value);
+      localStorage.setItem('ADMIN_SHUFFLE', String(optShuffle.checked));
+      if(optLimit.value) localStorage.setItem('ADMIN_LIMIT', String(optLimit.value));
+      else localStorage.removeItem('ADMIN_LIMIT');
+    }
+    function loadAdminState(){
+      var saved = localStorage.getItem('ADMIN_QUESTIONS');
+      qJson.value = saved ? saved : JSON.stringify(DEFAULT_QUESTIONS, null, 2);
+      var s = localStorage.getItem('ADMIN_SHUFFLE');
+      optShuffle.checked = (s===null) ? true : (s==='true');
+      var lim = localStorage.getItem('ADMIN_LIMIT');
+      optLimit.value = lim ? lim : '';
+    }
+    function applyQuestionsToGame(){
+      var data = parseQuestions(); if(!data) return;
+      saveAdminState();
+      var limit = parseInt(optLimit.value||data.length,10);
+      var arr = data.slice(0, Math.max(1, Math.min(limit, data.length)));
+      var doShuffle = !!optShuffle.checked;
+      if(doShuffle){
+        arr = shuffle(arr).map(function(q){ q.answers = shuffle(q.answers||[]); return q; });
+      }else{
+        arr = arr.map(function(q){ q.answers = (q.answers||[]); return q; });
+      }
+      QUESTIONS = arr;
+      answered=0; correctCount=0; wrongAttempts=0;
+      document.getElementById('adminPanel').style.display='none';
+      document.getElementById('result').style.display='none';
+      document.getElementById('game').style.display='block';
+      buildBoard();
+      stopTimer(); startTimer();
+    }
+
+    // رفع/إزالة صوت التشجيع
+var okVoicePick = document.getElementById('okVoicePick');
+var okVoiceFile = document.getElementById('okVoiceFile');
+var okVoiceClear = document.getElementById('okVoiceClear');
+
+if(okVoicePick && okVoiceFile){
+  okVoicePick.onclick = function(){ okVoiceFile.click(); };
+  okVoiceFile.onchange = function(){
+    var f = okVoiceFile.files[0];
+    if(!f) return;
+    if(!/^audio\//.test(f.type)){ alert('الرجاء اختيار ملف صوتي'); return; }
+    var r = new FileReader();
+    r.onload = function(){ setOkVoice(r.result); alert('تم تعيين صوت التشجيع بنجاح'); };
+    r.readAsDataURL(f); // يخزَّن محليًا — يعمل بلا إنترنت
+  };
+}
+if(okVoiceClear){
+  okVoiceClear.onclick = function(){
+    try{ localStorage.removeItem('OK_VOICE_SRC'); }catch(e){}
+    if(okVoiceEl){ okVoiceEl.src = OK_VOICE_DATAURI; } // رجوع للمدمج
+    alert('تمت إزالة الصوت المخصّص (عاد للصوت المدمج)');
+  };
+}
+
+    // أدوات الإعدادات
+    document.getElementById('adminBtn').onclick=function(){
+      var code=prompt('أدخل الرمز السري لفتح الإعدادات المتقدمة (افتراضي: 1234):');
+      if(code===null) return;
+      if(code!==ADMIN_CODE){ alert('الرمز غير صحيح'); return; }
+      loadAdminState();
+      document.getElementById('adminPanel').style.display='flex';
+    };
+    document.getElementById('adminClose') && (document.getElementById('adminClose').onclick=function(){ document.getElementById('adminPanel').style.display='none'; });
+    applyBtn && (applyBtn.onclick=applyQuestionsToGame);
+    exportBtn && (exportBtn.onclick=function(){ var blob=new Blob([qJson.value], {type:'application/json'}); var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='questions.json'; a.click(); URL.revokeObjectURL(a.href); });
+    importBtn && (importBtn.onclick=function(){ importFile.click(); });
+    importFile && (importFile.onchange=function(){ var f=this.files[0]; if(!f) return; var r=new FileReader(); r.onload=function(){ qJson.value=r.result; saveAdminState(); alert('تم الاستيراد'); }; r.readAsText(f); });
+    resetBtn && (resetBtn.onclick=function(){ qJson.value = JSON.stringify(DEFAULT_QUESTIONS, null, 2); optShuffle.checked = true; optLimit.value=''; saveAdminState(); alert('تمت استعادة الافتراضي'); });
+
+    /* بدء اللعبة */
+    function startWithCurrentSettings(){
+      var saved = localStorage.getItem('ADMIN_QUESTIONS');
+      var data = saved ? JSON.parse(saved) : DEFAULT_QUESTIONS;
+      var s = localStorage.getItem('ADMIN_SHUFFLE'); var doShuffle = (s===null) ? true : (s==='true');
+      var lim = parseInt(localStorage.getItem('ADMIN_LIMIT') || data.length, 10);
+      lim = Math.max(1, Math.min(lim||data.length, data.length));
+      var arr = data.slice(0, lim);
+      if(doShuffle){
+        arr = shuffle(arr).map(function(q){ q.answers = shuffle(q.answers||[]); return q; });
+      }else{
+        arr = arr.map(function(q){ q.answers=q.answers||[]; return q; });
+      }
+      QUESTIONS = arr;
+    }
+
+    document.getElementById('goBtn').onclick=function(){
+      playerName = (document.getElementById('playerName').value||'بطلي').trim();
+      startWithCurrentSettings();
+      answered=0; correctCount=0; wrongAttempts=0;
+      document.getElementById('start').style.display='none';
+      document.getElementById('result').style.display='none';
+      document.getElementById('game').style.display='block';
+      buildBoard();
+      stopTimer(); startTimer();
     };
 
-    // أزرار ثانوية
-    qs('#restart').onclick=function(){ current=0; firstTryCount=0; firstAttempt=true; renderQuestion(); };
-    qs('#playAgain').onclick=function(){ qs('#result').style.display='none'; qs('#setup').style.display='block'; };
-    qs('#backToSetup').onclick=function(){ qs('#result').style.display='none'; qs('#setup').style.display='block'; };
-
-    // شاشة البداية
-    qs('#goBtn').onclick=function(){
-      var nameVal = qs('#playerName').value || 'بطلي';
-      playerName = String(nameVal).trim();
-      alert('مرحبًا يا ' + playerName + '! حان وقت المرح والتعلم!');
-      qs('#start').style.display='none';
-      qs('#setup').style.display='block';
-      if(!isMuted) BGM.start();
+    document.getElementById('restart').onclick=function(){
+      startWithCurrentSettings();
+      answered=0; correctCount=0; wrongAttempts=0;
+      buildBoard();
+      stopTimer(); startTimer();
     };
-
-    // زر كتم/تشغيل الصوت
-    var muteBtn=qs('#muteBtn');
-    function refreshMuteUI(){ muteBtn.textContent = isMuted ? '🔇 صامت' : '🔊 الصوت'; }
-    muteBtn.onclick=function(){ isMuted = !isMuted; if(isMuted){ BGM.stop(); } else { if(qs('#setup').style.display!=='none' || qs('#result').style.display!=='none'){ BGM.start(); } } refreshMuteUI(); };
-    refreshMuteUI();
+    document.getElementById('playAgain').onclick=function(){
+      document.getElementById('result').style.display='none';
+      document.getElementById('game').style.display='block';
+      startWithCurrentSettings();
+      answered=0; correctCount=0; wrongAttempts=0;
+      buildBoard();
+      stopTimer(); startTimer();
+    };
   </script>
 </body>
 </html>
