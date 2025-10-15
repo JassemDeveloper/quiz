@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -119,7 +119,7 @@
       .qcard .centerMark img{ width:64px; height:64px }
     }
 
-    /* ===== هدية + بالونات (تأثير الإجابة الصحيحة) ===== */
+    /* ===== هدية + بالونات (تأثير الإجابة الصحيحة) — تمت إضافته ===== */
     #giftOverlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:1600;background:rgba(0,0,0,.35)}
     .gift-wrap{position:relative;width:min(360px,80vw);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center}
     .gift{position:relative;width:72%;height:72%}
@@ -137,92 +137,6 @@
     .gifts{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);font-size:44px;opacity:0;filter:drop-shadow(0 6px 10px rgba(0,0,0,.2))}
     @keyframes popGifts{0%{transform:translate(-50%,-30%) scale(.7);opacity:0}40%{opacity:1}100%{transform:translate(-50%,-150%) scale(1.05);opacity:0}}
     .gifts.run{animation:popGifts 1.1s ease-out forwards}
-
-    /* ===== تحسينات تجاوبية مدمجة (غير مكسّرة) ===== */
-
-    /* شاشات أصغر جدًا (≤ 360px) */
-    @media (max-width: 360px){
-      body{ font-size:1.2rem }
-      .container{ padding:16px }
-      .start-card{ padding:20px; border-radius:20px }
-      .start-title{ font-size:2.2rem }
-      .name-row{ gap:10px }
-      .name-row input{ min-width:0; width:100%; font-size:1.2rem; padding:12px 14px }
-      .btn{ padding:12px 14px; font-size:1.05rem; border-radius:14px }
-
-      #cardBoard{ grid-template-columns:repeat(2,1fr); gap:10px }
-      .qcard{ min-height:160px; border-width:4px }
-      .qcard .centerMark .num{ font-size:2.8rem }
-      .qcard .centerMark img{ width:56px; height:56px }
-
-      #qBox{ width:96vw; max-height:82vh }
-      .question{ font-size:1.9rem }
-      .choice{ font-size:1.2rem }
-      .choice .thumb{ height:130px }
-      .choice .thumb img{ max-width:100%; height:auto }
-    }
-
-    /* landscape على هواتف قصيرة (≤ 540px ارتفاعًا) */
-    @media (max-height: 540px) and (orientation: landscape){
-      body{ font-size:1.1rem }
-      #start{ align-items:flex-start; padding-top:8px }
-      .start-card{ margin-top:8px }
-      .container{ padding:16px }
-      .hud{ gap:8px; font-size:1.2rem; flex-wrap:wrap }
-      .pill{ padding:8px 12px }
-      .progress{ height:12px }
-      .qcard{ min-height:140px }
-      .choice .thumb{ height:110px }
-      #qBox{ max-height:78vh }
-    }
-
-    /* تابلت (640–900px): شبكة 3 أعمدة */
-    @media (min-width: 641px) and (max-width: 900px){
-      #cardBoard{ grid-template-columns:repeat(3,1fr) }
-    }
-
-    /* شاشات كبيرة جدًا (≥ 1601px) */
-    @media (min-width: 1601px){
-      body{ font-size:2.2rem }
-      .container{ max-width:min(1800px, 92vw) }
-      .qcard{ min-height:320px }
-      .qcard .centerMark .num{ font-size:6rem }
-      .choice .thumb{ height:240px }
-    }
-
-    /* صندوق السؤال: حماية قياسات */
-    #qModal{ padding:10px }
-    #qBox{ max-width:100%; width:min(1020px, 96vw) }
-    @supports (width: min(100%, 100%)){
-      #qBox{ width:min(1020px, 96vw) }
-    }
-
-    /* أهداف لمس مريحة للخيارات */
-    .choice{ min-height: calc(200px + 3.2em) }
-
-    /* iOS Safe Areas + توست */
-    @supports (padding: max(0px)){
-      body{
-        padding-inline: max(0px, env(safe-area-inset-left)) max(0px, env(safe-area-inset-right))
-      }
-      #toast{ top: max(24px, env(safe-area-inset-top)) }
-    }
-
-    /* احترام تفضيل تقليل الحركة */
-    @media (prefers-reduced-motion: reduce){
-      *{
-        animation-duration:.01ms !important;
-        animation-iteration-count:1 !important;
-        transition:none !important;
-        scroll-behavior:auto !important;
-      }
-    }
-
-    /* تباين أعلى لمن يحتاجه */
-    @media (prefers-contrast: more){
-      .chip,.pill{ border:1px solid #0c4a6e }
-      .qcard{ box-shadow:none; border-width:3px }
-    }
   </style>
 </head>
 <body>
@@ -292,7 +206,7 @@
   <!-- Toast -->
   <div id="toast" role="status" aria-live="polite"><span id="toastIcon">🎉</span><span id="toastMsg">...</span></div>
 
-  <!-- ===== طبقة صندوق الهدية + البالونات ===== -->
+  <!-- ===== طبقة صندوق الهدية + البالونات (مضافة) ===== -->
   <div id="giftOverlay">
     <div class="gift-wrap">
       <div class="gift" aria-hidden="true">
@@ -306,98 +220,302 @@
     </div>
   </div>
 
-  <!-- ===== أصوات محلية ===== -->
+  <!-- ===== أصوات محلية (ضع الملفات بجانب index.html) ===== -->
   <audio id="sfxCorrect" preload="auto" src="sfx-correct.mp3"></audio>
   <audio id="sfxWrong"   preload="auto" src="sfx-wrong.mp3"></audio>
 
  <script>
   /* أدوات صغيرة */
   function qs(s, r){return (r||document).querySelector(s)}
-  function shuffle(arr){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } return a; }
+  function shuffle(arr){ // Fisher–Yates
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] }
+    return a;
+  }
   function rand(arr){return arr[Math.floor(Math.random()*arr.length)]}
   function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 
-  /* ثابت واحد فقط */
-  const QUESTIONS_PER_ROUND = 6;
+  /* ثوابت */
+  const QUESTIONS_PER_ROUND = 6; // ثابت
 
   /* حالة اللعبة */
   let QUESTIONS=[], CARDS=[], answered=0, correctCount=0, wrongAttempts=0, startAt=0, timerId=null, playerName='';
 
   /* أيقونة البطاقة (صورة محلية اختيارية) */
-  const QMARK = "boy.png";
+  const QMARK = "boy.png"; // ضع صورة boy.png بجانب الملف
 
-  /* قاموس الأيقونات */
+  /* مكتبة صور للكلمات (من رسالتك) */
   const ICONS = {
-    "قطة":"https://cdn-icons-png.flaticon.com/128/1998/1998592.png","كلب":"https://cdn-icons-png.flaticon.com/512/616/616408.png","أسد":"https://cdn-icons-png.flaticon.com/128/12541/12541334.png","نمر":"https://cdn-icons-png.flaticon.com/128/1998/1998804.png","فيل":"https://cdn-icons-png.flaticon.com/128/7743/7743300.png","قرد":"https://cdn-icons-png.flaticon.com/128/1998/1998721.png","بقرة":"https://cdn-icons-png.flaticon.com/512/616/616528.png","حصان":"https://cdn-icons-png.flaticon.com/128/9537/9537923.png","جمل":"https://cdn-icons-png.flaticon.com/128/4215/4215091.png","أرنب":"https://cdn-icons-png.flaticon.com/128/1998/1998765.png","طائر":"https://cdn-icons-png.flaticon.com/128/1230/1230870.png","سمكة":"https://cdn-icons-png.flaticon.com/128/2970/2970068.png","ضفدع":"https://cdn-icons-png.flaticon.com/128/8677/8677566.png","بطة":"https://cdn-icons-png.flaticon.com/128/2120/2120233.png","دب":"https://cdn-icons-png.flaticon.com/128/1047/1047479.png","تفاح":"https://cdn-icons-png.flaticon.com/512/415/415733.png","موز":"https://cdn-icons-png.flaticon.com/128/2909/2909761.png","برتقال":"https://cdn-icons-png.flaticon.com/512/415/415734.png","عنب":"https://cdn-icons-png.flaticon.com/128/5376/5376172.png","بطيخ":"https://cdn-icons-png.flaticon.com/128/5582/5582664.png","فراولة":"https://cdn-icons-png.flaticon.com/128/7315/7315465.png","أناناس":"https://cdn-icons-png.flaticon.com/128/8692/8692265.png","ليمون":"https://cdn-icons-png.flaticon.com/512/415/415735.png","جزر":"https://cdn-icons-png.flaticon.com/128/3136/3136973.png","طماطم":"https://cdn-icons-png.flaticon.com/128/1790/1790387.png","بطاطس":"https://cdn-icons-png.flaticon.com/128/1652/1652127.png","كتاب":"https://cdn-icons-png.flaticon.com/128/5832/5832416.png","قلم":"https://cdn-icons-png.flaticon.com/128/2493/2493530.png","ممحاة":"https://cdn-icons-png.flaticon.com/128/776/776194.png","مسطرة":"https://cdn-icons-png.flaticon.com/128/595/595732.png","مقص":"https://cdn-icons-png.flaticon.com/128/10363/10363577.png","مثلث":"https://cdn-icons-png.flaticon.com/128/9796/9796733.png","مربع":"https://cdn-icons-png.flaticon.com/128/6038/6038682.png","دائرة":"https://cdn-icons-png.flaticon.com/128/5111/5111178.png","نجمة":"https://cdn-icons-png.flaticon.com/512/1828/1828884.png","قلب":"https://cdn-icons-png.flaticon.com/512/833/833472.png","ماسة":"https://cdn-icons-png.flaticon.com/128/408/408472.png","سيارة":"https://cdn-icons-png.flaticon.com/128/3097/3097180.png","حافلة":"https://cdn-icons-png.flaticon.com/128/1068/1068631.png","قطار":"https://cdn-icons-png.flaticon.com/128/1974/1974098.png","شاحنة":"https://cdn-icons-png.flaticon.com/128/870/870130.png","دراجة":"https://cdn-icons-png.flaticon.com/512/2972/2972185.png","طائرة":"https://cdn-icons-png.flaticon.com/128/10521/10521422.png","سفينة":"https://cdn-icons-png.flaticon.com/128/18098/18098671.png","هليكوبتر":"https://cdn-icons-png.flaticon.com/128/3097/3097187.png","شمس":"https://cdn-icons-png.flaticon.com/512/869/869869.png","قمر":"https://cdn-icons-png.flaticon.com/128/1823/1823397.png","سحابة":"https://cdn-icons-png.flaticon.com/512/414/414825.png","مطر":"https://cdn-icons-png.flaticon.com/128/8841/8841317.png","ثلج":"https://cdn-icons-png.flaticon.com/512/414/414968.png","شجرة":"https://cdn-icons-png.flaticon.com/128/490/490091.png","زهرة":"https://cdn-icons-png.flaticon.com/128/11504/11504574.png","جبل":"https://cdn-icons-png.flaticon.com/128/619/619010.png","كوب":"https://cdn-icons-png.flaticon.com/128/12974/12974286.png","كرسي":"https://cdn-icons-png.flaticon.com/128/607/607067.png","طاولة":"https://cdn-icons-png.flaticon.com/128/607/607069.png","سرير":"https://cdn-icons-png.flaticon.com/128/2283/2283945.png","ساعة":"https://cdn-icons-png.flaticon.com/128/2997/2997985.png","هاتف":"https://cdn-icons-png.flaticon.com/128/2482/2482945.png","قبعة":"https://cdn-icons-png.flaticon.com/128/1974/1974214.png","قميص":"https://cdn-icons-png.flaticon.com/512/892/892457.png","حذاء":"https://cdn-icons-png.flaticon.com/128/2742/2742687.png","حقيبة":"https://cdn-icons-png.flaticon.com/128/3275/3275938.png","بيتزا":"https://cdn-icons-png.flaticon.com/512/3132/3132693.png","بطاطا_مقلية":"https://cdn-icons-png.flaticon.com/128/1046/1046786.png","آيسكريم":"https://cdn-icons-png.flaticon.com/128/3157/3157358.png","كعكة":"https://cdn-icons-png.flaticon.com/128/2682/2682340.png","بيضة":"https://cdn-icons-png.flaticon.com/128/2168/2168010.png","خبز":"","طبيب":"https://cdn-icons-png.flaticon.com/128/2785/2785482.png","شرطي":"https://cdn-icons-png.flaticon.com/128/3270/3270987.png","معلمة":"https://cdn-icons-png.flaticon.com/128/5369/5369664.png","طيار":"https://cdn-icons-png.flaticon.com/128/10750/10750979.png","رجل_إطفاء":"https://cdn-icons-png.flaticon.com/128/950/950006.png"
+    "قطة": "https://cdn-icons-png.flaticon.com/128/1998/1998592.png",
+    "كلب": "https://cdn-icons-png.flaticon.com/512/616/616408.png",
+    "أسد": "https://cdn-icons-png.flaticon.com/128/12541/12541334.png",
+    "نمر": "https://cdn-icons-png.flaticon.com/128/1998/1998804.png",
+    "فيل": "https://cdn-icons-png.flaticon.com/128/7743/7743300.png",
+    "قرد": "https://cdn-icons-png.flaticon.com/128/1998/1998721.png",
+    "بقرة": "https://cdn-icons-png.flaticon.com/512/616/616528.png",
+    "حصان": "https://cdn-icons-png.flaticon.com/128/9537/9537923.png",
+    "جمل": "https://cdn-icons-png.flaticon.com/128/4215/4215091.png",
+    "أرنب": "https://cdn-icons-png.flaticon.com/128/1998/1998765.png",
+    "طائر": "https://cdn-icons-png.flaticon.com/128/1230/1230870.png",
+    "سمكة": "https://cdn-icons-png.flaticon.com/128/2970/2970068.png",
+    "ضفدع": "https://cdn-icons-png.flaticon.com/128/8677/8677566.png",
+    "بطة": "https://cdn-icons-png.flaticon.com/128/2120/2120233.png",
+    "دب": "https://cdn-icons-png.flaticon.com/128/1047/1047479.png",
+
+    "تفاح": "https://cdn-icons-png.flaticon.com/512/415/415733.png",
+    "موز": "https://cdn-icons-png.flaticon.com/128/2909/2909761.png",
+    "برتقال": "https://cdn-icons-png.flaticon.com/512/415/415734.png",
+    "عنب": "https://cdn-icons-png.flaticon.com/128/5376/5376172.png",
+    "بطيخ": "https://cdn-icons-png.flaticon.com/128/5582/5582664.png",
+    "فراولة": "https://cdn-icons-png.flaticon.com/128/7315/7315465.png",
+    "أناناس": "https://cdn-icons-png.flaticon.com/128/8692/8692265.png",
+    "ليمون": "https://cdn-icons-png.flaticon.com/512/415/415735.png",
+
+    "جزر": "https://cdn-icons-png.flaticon.com/128/3136/3136973.png",
+    "طماطم": "https://cdn-icons-png.flaticon.com/128/1790/1790387.png",
+    "بطاطس": "https://cdn-icons-png.flaticon.com/128/1652/1652127.png",
+
+    "كتاب": "https://cdn-icons-png.flaticon.com/128/5832/5832416.png",
+    "قلم": "https://cdn-icons-png.flaticon.com/128/2493/2493530.png",
+    "ممحاة": "https://cdn-icons-png.flaticon.com/128/776/776194.png",
+    "مسطرة": "https://cdn-icons-png.flaticon.com/128/595/595732.png",
+    "مقص": "https://cdn-icons-png.flaticon.com/128/10363/10363577.png",
+
+    "مثلث": "https://cdn-icons-png.flaticon.com/128/9796/9796733.png",
+    "مربع": "https://cdn-icons-png.flaticon.com/128/6038/6038682.png",
+    "دائرة": "https://cdn-icons-png.flaticon.com/128/5111/5111178.png",
+    "نجمة": "https://cdn-icons-png.flaticon.com/512/1828/1828884.png",
+    "قلب": "https://cdn-icons-png.flaticon.com/512/833/833472.png",
+    "ماسة": "https://cdn-icons-png.flaticon.com/128/408/408472.png",
+
+    "سيارة": "https://cdn-icons-png.flaticon.com/128/3097/3097180.png",
+    "حافلة": "https://cdn-icons-png.flaticon.com/128/1068/1068631.png",
+    "قطار": "https://cdn-icons-png.flaticon.com/128/1974/1974098.png",
+    "شاحنة": "https://cdn-icons-png.flaticon.com/128/870/870130.png",
+    "دراجة": "https://cdn-icons-png.flaticon.com/512/2972/2972185.png",
+    "طائرة": "https://cdn-icons-png.flaticon.com/128/10521/10521422.png",
+    "سفينة": "https://cdn-icons-png.flaticon.com/128/18098/18098671.png",
+    "هليكوبتر": "https://cdn-icons-png.flaticon.com/128/3097/3097187.png",
+
+    "شمس": "https://cdn-icons-png.flaticon.com/512/869/869869.png",
+    "قمر": "https://cdn-icons-png.flaticon.com/128/1823/1823397.png",
+    "سحابة": "https://cdn-icons-png.flaticon.com/512/414/414825.png",
+    "مطر": "https://cdn-icons-png.flaticon.com/128/8841/8841317.png",
+    "ثلج": "https://cdn-icons-png.flaticon.com/512/414/414968.png",
+    "شجرة": "https://cdn-icons-png.flaticon.com/128/490/490091.png",
+    "زهرة": "https://cdn-icons-png.flaticon.com/128/11504/11504574.png",
+    "جبل": "https://cdn-icons-png.flaticon.com/128/619/619010.png",
+
+    "كوب": "https://cdn-icons-png.flaticon.com/128/12974/12974286.png",
+    "كرسي": "https://cdn-icons-png.flaticon.com/128/607/607067.png",
+    "طاولة": "https://cdn-icons-png.flaticon.com/128/607/607069.png",
+    "سرير": "https://cdn-icons-png.flaticon.com/128/2283/2283945.png",
+    "ساعة": "https://cdn-icons-png.flaticon.com/128/2997/2997985.png",
+    "هاتف": "https://cdn-icons-png.flaticon.com/128/2482/2482945.png",
+
+    "قبعة": "https://cdn-icons-png.flaticon.com/128/1974/1974214.png",
+    "قميص": "https://cdn-icons-png.flaticon.com/512/892/892457.png",
+    "حذاء": "https://cdn-icons-png.flaticon.com/128/2742/2742687.png",
+    "حقيبة": "https://cdn-icons-png.flaticon.com/128/3275/3275938.png",
+
+    "بيتزا": "https://cdn-icons-png.flaticon.com/512/3132/3132693.png",
+    "بطاطا_مقلية": "https://cdn-icons-png.flaticon.com/128/1046/1046786.png",
+    "آيسكريم": "https://cdn-icons-png.flaticon.com/128/3157/3157358.png",
+    "كعكة": "https://cdn-icons-png.flaticon.com/128/2682/2682340.png",
+    "بيضة": "https://cdn-icons-png.flaticon.com/128/2168/2168010.png",
+    "خبز": "",
+
+    "طبيب": "https://cdn-icons-png.flaticon.com/128/2785/2785482.png",
+    "شرطي": "https://cdn-icons-png.flaticon.com/128/3270/3270987.png",
+    "معلمة": "https://cdn-icons-png.flaticon.com/128/5369/5369664.png",
+    "طيار": "https://cdn-icons-png.flaticon.com/128/10750/10750979.png",
+    "رجل_إطفاء": "https://cdn-icons-png.flaticon.com/128/950/950006.png"
   };
 
-  /* بنك أسئلة خام (بدون map مسبق) */
+  /* بنك أسئلة شامل (من رسائلك) */
   const QUESTIONS_POOL = [
-    {"question":"ما الحيوان الذي يقول ميووو؟","answers":[{"text":"قطة","isCorrect":true},{"text":"كلب"},{"text":"بقرة"}]},
-    {"question":"ما الحيوان الذي ينبح؟","answers":[{"text":"كلب","isCorrect":true},{"text":"قطة"},{"text":"سمكة"}]},
-    {"question":"ملك الغابة هو؟","answers":[{"text":"أسد","isCorrect":true},{"text":"نمر"},{"text":"قرد"}]},
-    {"question":"حيوان له سنام؟","answers":[{"text":"جمل","isCorrect":true},{"text":"حصان"},{"text":"بقرة"}]},
-    {"question":"أي حيوان يطير؟","answers":[{"text":"طائر","isCorrect":true},{"text":"قطة"},{"text":"سمكة"}]},
-    {"question":"أي حيوان يعيش في الماء؟","answers":[{"text":"سمكة","isCorrect":true},{"text":"أسد"},{"text":"أرنب"}]},
-    {"question":"أي حيوان يقفز وله جلد رطب؟","answers":[{"text":"ضفدع","isCorrect":true},{"text":"بطة"},{"text":"قرد"}]},
-    {"question":"أي حيوان يقول ماء ماء؟","answers":[{"text":"بطة","isCorrect":true},{"text":"حصان"},{"text":"قطة"}]},
-    {"question":"أي حيوان يُحلب؟","answers":[{"text":"بقرة","isCorrect":true},{"text":"أسد"},{"text":"نمر"}]},
-    {"question":"أي حيوان سريع للركوب؟","answers":[{"text":"حصان","isCorrect":true},{"text":"قرد"},{"text":"أرنب"}]},
-    {"question":"أي فاكهة لونها أصفر ومنحنية الشكل؟","answers":[{"text":"موز","isCorrect":true},{"text":"تفاح"},{"text":"فراولة"}]},
-    {"question":"أي فاكهة حمراء وبذورها على سطحها؟","answers":[{"text":"فراولة","isCorrect":true},{"text":"عنب"},{"text":"أناناس"}]},
-    {"question":"فاكهة على شكل عناقيد؟","answers":[{"text":"عنب","isCorrect":true},{"text":"تفاح"},{"text":"بطيخ"}]},
-    {"question":"أي فاكهة قشرتها برتقالية؟","answers":[{"text":"برتقال","isCorrect":true},{"text":"ليمون"},{"text":"موز"}]},
-    {"question":"أي فاكهة كبيرة خضراء من الخارج وحمراء من الداخل؟","answers":[{"text":"بطيخ","isCorrect":true},{"text":"تفاح"},{"text":"عنب"}]},
-    {"question":"أي فاكهة صفراء وحامضة؟","answers":[{"text":"ليمون","isCorrect":true},{"text":"تفاح"},{"text":"أناناس"}]},
-    {"question":"أي خضار لونه برتقالي؟","answers":[{"text":"جزر","isCorrect":true},{"text":"بطاطس"},{"text":"طماطم"}]},
-    {"question":"أي خضار نأكله في البطاطس المقلية؟","answers":[{"text":"بطاطس","isCorrect":true},{"text":"طماطم"},{"text":"جزر"}]},
-    {"question":"نستخدمه للكتابة؟","answers":[{"text":"قلم","isCorrect":true},{"text":"ممحاة"},{"text":"مقص"}]},
-    {"question":"نستخدمها لمسح الكتابة؟","answers":[{"text":"ممحاة","isCorrect":true},{"text":"قلم"},{"text":"مسطرة"}]},
-    {"question":"أي أداة لقياس الطول؟","answers":[{"text":"مسطرة","isCorrect":true},{"text":"مقص"},{"text":"كتاب"}]},
-    {"question":"نقطع الورق باستخدامه؟","answers":[{"text":"مقص","isCorrect":true},{"text":"قلم"},{"text":"ممحاة"}]},
-    {"question":"ما الذي نقرأه؟","answers":[{"text":"كتاب","isCorrect":true},{"text":"قلم"},{"text":"مقص"}]},
-    {"question":"أي شكل له ٤ أضلاع متساوية؟","answers":[{"text":"مربع","isCorrect":true},{"text":"مثلث"},{"text":"دائرة"}]},
-    {"question":"أي شكل ليس له زوايا؟","answers":[{"text":"دائرة","isCorrect":true},{"text":"مربع"},{"text":"مثلث"}]},
-    {"question":"أي شكل له ٣ أضلاع؟","answers":[{"text":"مثلث","isCorrect":true},{"text":"دائرة"},{"text":"مربع"}]},
-    {"question":"رمز الحب هو؟","answers":[{"text":"قلب","isCorrect":true},{"text":"نجمة"},{"text":"ماسة"}]},
-    {"question":"أي وسيلة تسير على السكك الحديدية؟","answers":[{"text":"قطار","isCorrect":true},{"text":"سيارة"},{"text":"حافلة"}]},
-    {"question":"أي وسيلة تطير في السماء؟","answers":[{"text":"طائرة","isCorrect":true},{"text":"سفينة"},{"text":"دراجة"}]},
-    {"question":"أي وسيلة تمشي على الطريق ولها أربع عجلات؟","answers":[{"text":"سيارة","isCorrect":true},{"text":"سفينة"},{"text":"طائرة"}]},
-    {"question":"أي وسيلة تنقل الناس داخل المدينة؟","answers":[{"text":"حافلة","isCorrect":true},{"text":"طائرة"},{"text":"دراجة"}]},
-    {"question":"أي وسيلة تسير فوق البحر؟","answers":[{"text":"سفينة","isCorrect":true},{"text":"طائرة"},{"text":"سيارة"}]},
-    {"question":"ننام على؟","answers":[{"text":"سرير","isCorrect":true},{"text":"كرسي"},{"text":"طاولة"}]},
-    {"question":"نجلس على؟","answers":[{"text":"كرسي","isCorrect":true},{"text":"سرير"},{"text":"كوب"}]},
-    {"question":"نشرب الماء في؟","answers":[{"text":"كوب","isCorrect":true},{"text":"كتاب"},{"text":"هاتف"}]},
-    {"question":"نأكل الطعام على؟","answers":[{"text":"طاولة","isCorrect":true},{"text":"كرسي"},{"text":"كوب"}]},
-    {"question":"نرى الوقت بواسطة؟","answers":[{"text":"ساعة","isCorrect":true},{"text":"هاتف"},{"text":"كوب"}]},
-    {"question":"نرتدي على الرأس؟","answers":[{"text":"قبعة","isCorrect":true},{"text":"قميص"},{"text":"حذاء"}]},
-    {"question":"نلبس في القدمين؟","answers":[{"text":"حذاء","isCorrect":true},{"text":"قبعة"},{"text":"حقيبة"}]},
-    {"question":"نلبس في الجسم العلوي؟","answers":[{"text":"قميص","isCorrect":true},{"text":"قبعة"},{"text":"حذاء"}]},
-    {"question":"نضع أغراضنا في؟","answers":[{"text":"حقيبة","isCorrect":true},{"text":"كوب"},{"text":"كرسي"}]},
-    {"question":"أكلة مستديرة مع الجبن وتُقطع مثلثات؟","answers":[{"text":"بيتزا","isCorrect":true},{"text":"كعكة"},{"text":"بطاطا_مقلية"}]},
-    {"question":"حلوى باردة في الصيف؟","answers":[{"text":"آيسكريم","isCorrect":true},{"text":"كعكة"},{"text":"بيتزا"}]},
-    {"question":"نأكلها في الفرح أو النجاح؟","answers":[{"text":"كعكة","isCorrect":true},{"text":"بيتزا"},{"text":"بطاطا_مقلية"}]},
-    {"question":"نتناولها في الإفطار؟","answers":[{"text":"بيضة","isCorrect":true},{"text":"آيسكريم"},{"text":"كعكة"}]},
-    {"question":"من يعالج المرضى؟","answers":[{"text":"طبيب","isCorrect":true},{"text":"شرطي"},{"text":"معلمة"}]},
-    {"question":"من يعلّم الطلاب؟","answers":[{"text":"معلمة","isCorrect":true},{"text":"طيار"},{"text":"شرطي"}]},
-    {"question":"من يقود الطائرة؟","answers":[{"text":"طيار","isCorrect":true},{"text":"شرطي"},{"text":"طبيب"}]},
-    {"question":"من يطفئ النار؟","answers":[{"text":"رجل_إطفاء","isCorrect":true},{"text":"طيار"},{"text":"معلمة"}]},
-    {"question":"من يحافظ على الأمن؟","answers":[{"text":"شرطي","isCorrect":true},{"text":"طبيب"},{"text":"رجل_إطفاء"}]},
-    {"question":"يظهر في الليل؟","answers":[{"text":"قمر","isCorrect":true},{"text":"شجرة"},{"text":"جبل"}]},
-    {"question":"يظهر في النهار؟","answers":[{"text":"شمس","isCorrect":true},{"text":"بحر"},{"text":"كرسي"}]},
-    {"question":"ما الذي ينزل من السماء عندما تمطر؟","answers":[{"text":"مطر","isCorrect":true},{"text":"ثلج"},{"text":"تراب"}]},
-    {"question":"ما الذي يكون أبيض ويسقط في الشتاء؟","answers":[{"text":"ثلج","isCorrect":true},{"text":"مطر"},{"text":"شمس"}]}
-  ];
+    {"question":"ما الحيوان الذي يقول ميووو؟","answers":[
+      {"text":"قطة","isCorrect":true},{"text":"كلب"},{"text":"بقرة"}
+    ]},
+    {"question":"ما الحيوان الذي ينبح؟","answers":[
+      {"text":"كلب","isCorrect":true},{"text":"قطة"},{"text":"سمكة"}
+    ]},
+    {"question":"ملك الغابة هو؟","answers":[
+      {"text":"أسد","isCorrect":true},{"text":"نمر"},{"text":"قرد"}
+    ]},
+    {"question":"حيوان له سنام؟","answers":[
+      {"text":"جمل","isCorrect":true},{"text":"حصان"},{"text":"بقرة"}
+    ]},
+    {"question":"أي حيوان يطير؟","answers":[
+      {"text":"طائر","isCorrect":true},{"text":"قطة"},{"text":"سمكة"}
+    ]},
+    {"question":"أي حيوان يعيش في الماء؟","answers":[
+      {"text":"سمكة","isCorrect":true},{"text":"أسد"},{"text":"أرنب"}
+    ]},
+    {"question":"أي حيوان يقفز وله جلد رطب؟","answers":[
+      {"text":"ضفدع","isCorrect":true},{"text":"بطة"},{"text":"قرد"}
+    ]},
+    {"question":"أي حيوان يقول ماء ماء؟","answers":[
+      {"text":"بطة","isCorrect":true},{"text":"حصان"},{"text":"قطة"}
+    ]},
+    {"question":"أي حيوان يُحلب؟","answers":[
+      {"text":"بقرة","isCorrect":true},{"text":"أسد"},{"text":"نمر"}
+    ]},
+    {"question":"أي حيوان سريع للركوب؟","answers":[
+      {"text":"حصان","isCorrect":true},{"text":"قرد"},{"text":"أرنب"}
+    ]},
 
-  /* تنظيف البنك + إلحاق الصور + دفاعية */
-  const CLEAN_POOL = (QUESTIONS_POOL || [])
-    .filter(q => q && typeof q.question === 'string' && Array.isArray(q.answers) && q.answers.length)
-    .map(q => ({
-      ...q,
-      answers: q.answers
-        .filter(a => a && typeof a.text === 'string')
-        .map(a => ({ ...a, image: (ICONS[a.text] || a.image || undefined) }))
-    }));
+    {"question":"أي فاكهة لونها أصفر ومنحنية الشكل؟","answers":[
+      {"text":"موز","isCorrect":true},{"text":"تفاح"},{"text":"فراولة"}
+    ]},
+    {"question":"أي فاكهة حمراء وبذورها على سطحها؟","answers":[
+      {"text":"فراولة","isCorrect":true},{"text":"عنب"},{"text":"أناناس"}
+    ]},
+    {"question":"فاكهة على شكل عناقيد؟","answers":[
+      {"text":"عنب","isCorrect":true},{"text":"تفاح"},{"text":"بطيخ"}
+    ]},
+    {"question":"أي فاكهة قشرتها برتقالية؟","answers":[
+      {"text":"برتقال","isCorrect":true},{"text":"ليمون"},{"text":"موز"}
+    ]},
+    {"question":"أي فاكهة كبيرة خضراء من الخارج وحمراء من الداخل؟","answers":[
+      {"text":"بطيخ","isCorrect":true},{"text":"تفاح"},{"text":"عنب"}
+    ]},
+    {"question":"أي فاكهة صفراء وحامضة؟","answers":[
+      {"text":"ليمون","isCorrect":true},{"text":"تفاح"},{"text":"أناناس"}
+    ]},
+    {"question":"أي خضار لونه برتقالي؟","answers":[
+      {"text":"جزر","isCorrect":true},{"text":"بطاطس"},{"text":"طماطم"}
+    ]},
+    {"question":"أي خضار نأكله في البطاطس المقلية؟","answers":[
+      {"text":"بطاطس","isCorrect":true},{"text":"طماطم"},{"text":"جزر"}
+    ]},
+
+    {"question":"نستخدمه للكتابة؟","answers":[
+      {"text":"قلم","isCorrect":true},{"text":"ممحاة"},{"text":"مقص"}
+    ]},
+    {"question":"نستخدمها لمسح الكتابة؟","answers":[
+      {"text":"ممحاة","isCorrect":true},{"text":"قلم"},{"text":"مسطرة"}
+    ]},
+    {"question":"أي أداة لقياس الطول؟","answers":[
+      {"text":"مسطرة","isCorrect":true},{"text":"مقص"},{"text":"كتاب"}
+    ]},
+    {"question":"نقطع الورق باستخدامه؟","answers":[
+      {"text":"مقص","isCorrect":true},{"text":"قلم"},{"text":"ممحاة"}
+    ]},
+    {"question":"ما الذي نقرأه؟","answers":[
+      {"text":"كتاب","isCorrect":true},{"text":"قلم"},{"text":"مقص"}
+    ]},
+
+    {"question":"أي شكل له ٤ أضلاع متساوية؟","answers":[
+      {"text":"مربع","isCorrect":true},{"text":"مثلث"},{"text":"دائرة"}
+    ]},
+    {"question":"أي شكل ليس له زوايا؟","answers":[
+      {"text":"دائرة","isCorrect":true},{"text":"مربع"},{"text":"مثلث"}
+    ]},
+    {"question":"أي شكل له ٣ أضلاع؟","answers":[
+      {"text":"مثلث","isCorrect":true},{"text":"دائرة"},{"text":"مربع"}
+    ]},
+    {"question":"رمز الحب هو؟","answers":[
+      {"text":"قلب","isCorrect":true},{"text":"نجمة"},{"text":"ماسة"}
+    ]},
+
+    {"question":"أي وسيلة تسير على السكك الحديدية؟","answers":[
+      {"text":"قطار","isCorrect":true},{"text":"سيارة"},{"text":"حافلة"}
+    ]},
+    {"question":"أي وسيلة تطير في السماء؟","answers":[
+      {"text":"طائرة","isCorrect":true},{"text":"سفينة"},{"text":"دراجة"}
+    ]},
+    {"question":"أي وسيلة تمشي على الطريق ولها أربع عجلات؟","answers":[
+      {"text":"سيارة","isCorrect":true},{"text":"سفينة"},{"text":"طائرة"}
+    ]},
+    {"question":"أي وسيلة تنقل الناس داخل المدينة؟","answers":[
+      {"text":"حافلة","isCorrect":true},{"text":"طائرة"},{"text":"دراجة"}
+    ]},
+    {"question":"أي وسيلة تسير فوق البحر؟","answers":[
+      {"text":"سفينة","isCorrect":true},{"text":"طائرة"},{"text":"سيارة"}
+    ]},
+
+    {"question":"ننام على؟","answers":[
+      {"text":"سرير","isCorrect":true},{"text":"كرسي"},{"text":"طاولة"}
+    ]},
+    {"question":"نجلس على؟","answers":[
+      {"text":"كرسي","isCorrect":true},{"text":"سرير"},{"text":"كوب"}
+    ]},
+    {"question":"نشرب الماء في؟","answers":[
+      {"text":"كوب","isCorrect":true},{"text":"كتاب"},{"text":"هاتف"}
+    ]},
+    {"question":"نأكل الطعام على؟","answers":[
+      {"text":"طاولة","isCorrect":true},{"text":"كرسي"},{"text":"كوب"}
+    ]},
+    {"question":"نرى الوقت بواسطة؟","answers":[
+      {"text":"ساعة","isCorrect":true},{"text":"هاتف"},{"text":"كوب"}
+    ]},
+
+    {"question":"نرتدي على الرأس؟","answers":[
+      {"text":"قبعة","isCorrect":true},{"text":"قميص"},{"text":"حذاء"}
+    ]},
+    {"question":"نلبس في القدمين؟","answers":[
+      {"text":"حذاء","isCorrect":true},{"text":"قبعة"},{"text":"حقيبة"}
+    ]},
+    {"question":"نلبس في الجسم العلوي؟","answers":[
+      {"text":"قميص","isCorrect":true},{"text":"قبعة"},{"text":"حذاء"}
+    ]},
+    {"question":"نضع أغراضنا في؟","answers":[
+      {"text":"حقيبة","isCorrect":true},{"text":"كوب"},{"text":"كرسي"}
+    ]},
+
+    {"question":"أكلة مستديرة مع الجبن وتُقطع مثلثات؟","answers":[
+      {"text":"بيتزا","isCorrect":true},{"text":"كعكة"},{"text":"بطاطا_مقلية"}
+    ]},
+    {"question":"حلوى باردة في الصيف؟","answers":[
+      {"text":"آيسكريم","isCorrect":true},{"text":"كعكة"},{"text":"بيتزا"}
+    ]},
+    {"question":"نأكلها في الفرح أو النجاح؟","answers":[
+      {"text":"كعكة","isCorrect":true},{"text":"بيتزا"},{"text":"بطاطا_مقلية"}
+    ]},
+    {"question":"نتناولها في الإفطار؟","answers":[
+      {"text":"بيضة","isCorrect":true},{"text":"آيسكريم"},{"text":"كعكة"}
+    ]},
+
+    {"question":"من يعالج المرضى؟","answers":[
+      {"text":"طبيب","isCorrect":true},{"text":"شرطي"},{"text":"معلمة"}
+    ]},
+    {"question":"من يعلّم الطلاب؟","answers":[
+      {"text":"معلمة","isCorrect":true},{"text":"طيار"},{"text":"شرطي"}
+    ]},
+    {"question":"من يقود الطائرة؟","answers":[
+      {"text":"طيار","isCorrect":true},{"text":"شرطي"},{"text":"طبيب"}
+    ]},
+    {"question":"من يطفئ النار؟","answers":[
+      {"text":"رجل_إطفاء","isCorrect":true},{"text":"طيار"},{"text":"معلمة"}
+    ]},
+    {"question":"من يحافظ على الأمن؟","answers":[
+      {"text":"شرطي","isCorrect":true},{"text":"طبيب"},{"text":"رجل_إطفاء"}
+    ]},
+
+    {"question":"يظهر في الليل؟","answers":[
+      {"text":"قمر","isCorrect":true},{"text":"شجرة"},{"text":"جبل"}
+    ]},
+    {"question":"يظهر في النهار؟","answers":[
+      {"text":"شمس","isCorrect":true},{"text":"بحر"},{"text":"كرسي"}
+    ]},
+    {"question":"ما الذي ينزل من السماء عندما تمطر؟","answers":[
+      {"text":"مطر","isCorrect":true},{"text":"ثلج"},{"text":"تراب"}
+    ]},
+    {"question":"ما الذي يكون أبيض ويسقط في الشتاء؟","answers":[
+      {"text":"ثلج","isCorrect":true},{"text":"مطر"},{"text":"شمس"}
+    ]}
+  ].map(q => ({
+    ...q,
+    answers: q.answers.map(a => ({
+      ...a,
+      image: ICONS[a.text] || a.image || undefined
+    }))
+  }));
+
+  /* رسائل */
+  const MSG_OK = ['رائع يا بطل!','ممتاز! استمر 👏','يا سلام! إجابة صحيحة 🌟'];
+  const MSG_ERR = ['لا بأس، حاول مرة أخرى يا بطل! 💪','لا تيأس يا بطل، ستنجح! 🌟','أنت قادر عليها! جرّب مجددًا! 🙌'];
 
   /* HUD */
   const timerEl=qs('#timer'), firstTryEl=qs('#firstTry'), wrongHudEl=qs('#wrongHud'), qIndexEl=qs('#qIndex'), progressBar=qs('#progressBar');
@@ -411,7 +529,7 @@
   const sfxErr = document.getElementById('sfxWrong');
   function playSfx(el){ if(!el) return; try{ el.currentTime = 0; el.play(); }catch(e){} }
 
-  /* تأثير صندوق الهدية */
+  /* ===== دالة تأثير صندوق الهدية — مضافة ===== */
   function showGiftBox(next){
     const ov=document.getElementById('giftOverlay');
     const balloons=document.getElementById('balloons');
@@ -448,6 +566,7 @@
     }, 1800);
   }
 
+  /* تأثيرات مرئية (بقيت موجودة للخطأ وغيرها) */
   function showHappy(){ const el=qs('#happyImg'); el && (el.style.display='block', setTimeout(()=>{ el.style.display='none'},1500)) }
   function showSad(){ const el=qs('#sadImg'); el && (el.style.display='block', setTimeout(()=>{ el.style.display='none'},900)) }
   function showClap(){ const el=qs('#clapOverlay'); el && (el.style.display='flex', setTimeout(()=>{ el.style.display='none'},1300)) }
@@ -482,18 +601,10 @@
     toastTimer = setTimeout(()=>{ toast.classList.remove('toast-show'); toast.classList.add('toast-hide'); setTimeout(()=>{ toast.style.display='none' },240); },1400);
   }
 
-  /* اختيار أسئلة عشوائية — دفاعي */
+  /* اختيار 6 أسئلة عشوائية */
   function pickRandomQuestions(pool, n){
-    const safe = (pool || [])
-      .filter(q => q && Array.isArray(q.answers) && q.answers.length);
-
-    const size = Math.min(Number.isFinite(n) ? n : 6, safe.length);
-    const arr = shuffle(safe).slice(0, size);
-
-    return arr.map(q => ({
-      ...q,
-      answers: shuffle((q && q.answers) ? q.answers : [])
-    }));
+    const arr = shuffle(pool).slice(0, Math.min(n, pool.length));
+    return arr.map(q => ({...q, answers: shuffle(q.answers||[]) }));
   }
 
   /* بطاقات */
@@ -536,7 +647,7 @@
   qs('#closeModalBtn') && (qs('#closeModalBtn').onclick=closeModal);
   document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
 
-  /* منطق الإجابة */
+  /* منطق الإجابة — تم دمج تأثير الهدية في فرع النجاح */
   function answerWithRetries(btn, ok, cardEl){
     const choicesWrap=qs('#choices');
     if(ok){
@@ -544,8 +655,9 @@
       btn.classList.add('is-correct'); cardEl.classList.add('correct');
       correctCount++; answered++;
       playSfx(sfxOk);
-      showToast(rand(['رائع يا بطل!','ممتاز! استمر 👏','يا سلام! إجابة صحيحة 🌟']), 'ok');
+      showToast(rand(MSG_OK), 'ok');
 
+      // 🎁 تأثير صندوق الهدية — ثم إزالة البطاقة والمتابعة
       showGiftBox(function(){
         if(cardEl && cardEl.parentNode){ cardEl.classList.add('done'); cardEl.remove(); }
         updateHud(); closeModal();
@@ -558,7 +670,7 @@
       setTimeout(()=>{ btn.classList.remove('shake') }, 350);
       wrongAttempts++;
       playSfx(sfxErr);
-      showToast(rand(['لا بأس، حاول مرة أخرى يا بطل! 💪','لا تيأس يا بطل، ستنجح! 🌟','أنت قادر عليها! جرّب مجددًا! 🙌']), 'err');
+      showSad(); showToast(rand(MSG_ERR), 'err');
       setTimeout(()=>{ updateHud(); btn.disabled=false; }, 900);
     }
   }
@@ -577,13 +689,15 @@
     qs('#result').style.display='block';
   }
 
-  /* بدء/إعادة — تستخدم CLEAN_POOL */
+  /* اختيار مجموعة 6 جديدة عند البدء/الإعادة */
   function startWithCurrentSettings(){
-    QUESTIONS = pickRandomQuestions(CLEAN_POOL, QUESTIONS_PER_ROUND);
+    QUESTIONS = pickRandomQuestions(QUESTIONS_POOL, QUESTIONS_PER_ROUND); // دائماً 6 عشوائي
   }
 
+  // أزرار التحكم
   document.getElementById('goBtn').onclick=function(){
     playerName = (document.getElementById('playerName').value||'بطلي').trim();
+    // فتح الصوت (أول تفاعل)
     if(sfxOk){ try{ sfxOk.play().then(()=>{sfxOk.pause(); sfxOk.currentTime=0;}).catch(()=>{});}catch(e){} }
     if(sfxErr){ try{ sfxErr.play().then(()=>{sfxErr.pause(); sfxErr.currentTime=0;}).catch(()=>{});}catch(e){} }
 
@@ -595,7 +709,7 @@
     buildBoard(); stopTimer(); startTimer();
   };
 
-  /* تشغيل تلقائي للاختبار */
+  // تشغيل تلقائي كما في كودك (test)
   function test(){
     playerName = (document.getElementById('playerName').value||'بطلي').trim();
     if(sfxOk){ try{ sfxOk.play().then(()=>{sfxOk.pause(); sfxOk.currentTime=0;}).catch(()=>{});}catch(e){} }
@@ -623,6 +737,6 @@
     answered=0; correctCount=0; wrongAttempts=0;
     buildBoard(); stopTimer(); startTimer();
   };
- </script>
+</script>
 </body>
 </html>
